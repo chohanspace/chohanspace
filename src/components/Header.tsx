@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -29,6 +30,9 @@ const aiTools = [
     { href: '/tool/content-suggester', label: 'Content Suggester' },
     { href: '/tool/technical-manual', label: 'Technical Manual Assistant' },
     { href: '/tool/case-study-generator', label: 'Case Study Generator' },
+    { href: '/tool/mission-generator', label: 'Mission Idea Generator' },
+    { href: '/tool/crisis-communicator', label: 'Crisis Communicator' },
+    { href: '/tool/launch-predictor', label: 'Launch Success Predictor' },
 ];
 
 const ioTools = [

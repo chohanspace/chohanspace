@@ -1,11 +1,12 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, AlertTriangle, Gauge } from 'lucide-react';
 import Link from 'next/link';
 
 const aiFeatures = [
-    { 
-        href: '/tool/content-suggester', 
+    {
+        href: '/tool/content-suggester',
         label: 'Content Suggester',
         description: "Get help writing project descriptions and finding keywords.",
         icon: <Lightbulb />
@@ -21,6 +22,12 @@ const aiFeatures = [
         label: 'Case Study Generator',
         description: 'Generate professional case studies for your web projects.',
         icon: <FileText />
+    },
+    { 
+        href: '/tool/mission-generator', 
+        label: 'Mission Idea Generator',
+        description: "Brainstorm new space mission concepts from a few keywords.",
+        icon: <Rocket />
     },
 ];
 
