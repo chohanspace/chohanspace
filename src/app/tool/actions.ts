@@ -1,3 +1,4 @@
+
 'use server';
 
 import { suggestContent, type SuggestContentInput } from '@/ai/flows/content-suggestion-tool';
@@ -100,7 +101,7 @@ export async function generateCrisisComm(input: CrisisCommInput) {
 }
 
 const storyInputSchema = z.object({
-    prompt: z.string().min(10),
+    prompt: z.string().min(1),
 });
 
 export async function generateStory(input: StoryInput) {
@@ -121,10 +122,10 @@ export async function generateStory(input: StoryInput) {
 }
 
 const caseStudyInputSchema = z.object({
-    projectName: z.string().min(3),
-    projectGoals: z.string().min(10),
-    technologiesUsed: z.string().min(3),
-    outcome: z.string().min(10),
+    projectName: z.string().min(1),
+    projectGoals: z.string().min(1),
+    technologiesUsed: z.string().min(1),
+    outcome: z.string().min(1),
 });
 
 export async function generateCaseStudy(input: CaseStudyInput) {
@@ -203,38 +204,125 @@ const emailTranscriptSchema = z.object({
 });
 
 function formatTranscriptAsHtml(messages: Message[]): string {
-    let html = `
-        <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-            <h2 style="color: #333;">Your Chohan Space Chat Transcript</h2>
-            <p>Here is a copy of your recent conversation with the Chohan Space assistant.</p>
-            <div style="border-top: 1px solid #eee; margin: 20px 0;"></div>
-    `;
-
-    messages.forEach(message => {
+    const messageRows = messages.map(message => {
         const isUser = message.role === 'user';
-        const styles = {
-            container: `margin-bottom: 10px; display: flex; justify-content: ${isUser ? 'flex-end' : 'flex-start'};`,
-            bubble: `padding: 10px 15px; border-radius: 18px; max-width: 70%; background-color: ${isUser ? '#3b82f6' : '#e5e7eb'}; color: ${isUser ? '#ffffff' : '#1f2937'};`,
-            role: `display: block; font-size: 0.9em; margin-bottom: 5px; font-weight: bold; color: ${isUser ? '#dbeafe' : '#4b5563'};`,
-        };
-        
-        html += `
-            <div style="${styles.container}">
-                <div style="${styles.bubble}">
-                    <strong style="${styles.role}">${isUser ? 'You' : 'Assistant'}</strong>
-                    ${message.content.replace(/\n/g, '<br>')}
-                </div>
-            </div>
-        `;
-    });
+        const align = isUser ? 'right' : 'left';
+        const bubbleStyle = `background-color: ${isUser ? '#373A40' : '#EEEEEE'}; color: ${isUser ? '#FFFFFF' : '#333333'}; border-radius: 18px; padding: 12px 18px; max-width: 75%; display: inline-block; text-align: left;`;
+        const roleStyle = `font-size: 0.8em; color: #999999; margin-bottom: 5px;`;
+        const roleName = isUser ? 'You' : 'Chohan Space Assistant';
 
-    html += `
-        <div style="border-top: 1px solid #eee; margin-top: 20px; padding-top: 15px; font-size: 0.8em; color: #888; text-align: center;">
-            <p>This is an automated message. Visit us at <a href="https://chohan.space" style="color: #3b82f6;">chohan.space</a>.</p>
-        </div>
-        </div>
+        return `
+            <tr>
+                <td style="padding: 5px 0; text-align: ${align};">
+                    <div style="margin-${isUser ? 'left' : 'right'}: auto;">
+                        <div style="${roleStyle}">${roleName}</div>
+                        <div style="${bubbleStyle}">
+                            ${message.content.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Chohan Space Chat Transcript</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+        }
+        .header {
+            background: linear-gradient(-45deg, #111827, #374151, #4b5563, #1f2937);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 30px;
+            color: #374151;
+        }
+        .content p {
+            margin: 0 0 15px;
+            line-height: 1.6;
+        }
+        .chat-table {
+            width: 100%;
+            border-spacing: 0;
+        }
+        .footer {
+            background-color: #F9FAFB;
+            color: #6B7280;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            border-top: 1px solid #E5E7EB;
+        }
+        .footer a {
+            color: #4B5563;
+            text-decoration: none;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @media screen and (max-width: 600px) {
+            .content, .header { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F3F4F6; padding: 20px;">
+        <tr>
+            <td align="center">
+                <div class="email-container">
+                    <div class="header">
+                        <h1>Chohan Space</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hello,</p>
+                        <p>Thank you for chatting with us. Here is a transcript of your recent conversation with the Chohan Space AI Assistant.</p>
+                        <table class="chat-table" border="0" cellspacing="0" cellpadding="0">
+                            ${messageRows}
+                        </table>
+                    </div>
+                    <div class="footer">
+                        <p>&copy; ${new Date().getFullYear()} Chohan Space. All rights reserved.</p>
+                        <p><a href="https://chohan.space">Visit our website</a></p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
     `;
-    return html;
 }
 
 
@@ -252,7 +340,7 @@ export async function sendChatTranscript(data: { email: string; messages: Messag
     }
 
     const htmlContent = formatTranscriptAsHtml(messages);
-    const textContent = messages.map(m => `${m.role === 'user' ? 'You' : 'Assistant'}: ${m.content}`).join('\n');
+    const textContent = messages.map(m => `${m.role === 'user' ? 'You' : 'Assistant'}: ${m.content}`).join('\\n');
 
     return await sendEmail({
         to: email,
@@ -261,5 +349,3 @@ export async function sendChatTranscript(data: { email: string; messages: Messag
         html: htmlContent,
     });
 }
-
-    
