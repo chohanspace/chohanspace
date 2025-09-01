@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import type { BlogPost } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { Trash2, Loader2, FileText, Calendar, User } from 'lucide-react';
+import { Trash2, Loader2, FileText, Calendar, User, Eye } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +19,7 @@ import {
 import { deleteBlogPost } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
 
 export default function BlogManagementList({ initialPosts, onPostDeleted }: { initialPosts: BlogPost[], onPostDeleted: () => void }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -67,31 +68,39 @@ export default function BlogManagementList({ initialPosts, onPostDeleted }: { in
                         <span className="flex items-center"><Calendar className="mr-1 h-4 w-4" />{new Date(post.date).toLocaleDateString()}</span>
                     </div>
                 </div>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="icon" disabled={isDeleting === post.id}>
-                        {isDeleting === post.id ? (
-                            <Loader2 className="animate-spin" />
-                        ) : (
-                            <Trash2 />
-                        )}
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this blog post.
-                        </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(post.id)}>
-                            Continue
-                        </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <div className="flex items-center gap-2 shrink-0">
+                    <Button variant="outline" size="icon" asChild>
+                      <Link href={`/blog/${post.slug}`} target="_blank">
+                        <Eye />
+                        <span className="sr-only">Preview</span>
+                      </Link>
+                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon" disabled={isDeleting === post.id}>
+                            {isDeleting === post.id ? (
+                                <Loader2 className="animate-spin" />
+                            ) : (
+                                <Trash2 />
+                            )}
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete this blog post.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(post.id)}>
+                                Continue
+                            </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
             </div>
              {index < initialPosts.length - 1 && <Separator className="mt-6" />}
         </div>
