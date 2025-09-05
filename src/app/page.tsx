@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 
 const aiFeatures = [
@@ -63,6 +63,38 @@ export default function Home() {
               Explore Our AI Tools <ArrowRight className="ml-2" />
             </Link>
           </Button>
+        </div>
+      </section>
+
+      {/* Premier AI Tool Section */}
+      <section className="py-16 md:py-24 bg-secondary dark:bg-card scroll-animate">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-sm font-bold uppercase text-primary tracking-widest">A Chohan Space & Butt Networks Collaboration</h2>
+            <p className="text-3xl md:text-4xl font-bold font-headline mt-2">Introducing: The Personalization Engine</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+            <div className="relative aspect-square bg-background rounded-lg flex items-center justify-center p-8 shadow-2xl">
+              <BrainCircuit className="h-3/5 w-3/5 text-primary animate-pulse" />
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold">Dynamically Adapt Your Content</h3>
+              <p className="text-muted-foreground">
+                Our premier AI tool, developed in partnership with Butt Networks, analyzes user behavior to deliver real-time, personalized content experiences.
+                Boost engagement and conversions by showing every visitor exactly what they want to see, when they want to see it.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Real-time user behavior analysis.</li>
+                <li>Dynamic content & layout adjustments.</li>
+                <li>A/B testing and performance insights.</li>
+              </ul>
+              <Button asChild>
+                <Link href="/projects">
+                  Learn More <ArrowRight className="ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
       
@@ -201,5 +233,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
