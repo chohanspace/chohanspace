@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit, Bot, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 const aiFeatures = [
@@ -74,7 +74,7 @@ export default function Home() {
             <p className="text-3xl md:text-4xl font-bold font-headline mt-2">Introducing: The Personalization Engine</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
-            <div className="relative aspect-square bg-background rounded-lg flex items-center justify-center p-8 shadow-2xl">
+            <div className="relative aspect-video bg-background rounded-lg flex items-center justify-center p-8 shadow-2xl overflow-hidden">
               <BrainCircuit className="h-3/5 w-3/5 text-primary animate-pulse" />
             </div>
             <div className="space-y-4">
@@ -97,9 +97,31 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ChatForge AI Coming Soon Section */}
+      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.2s' }}>
+        <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+                 <div className="space-y-4">
+                    <h2 className="text-sm font-bold uppercase text-primary tracking-widest">The Next Frontier</h2>
+                    <p className="text-3xl md:text-4xl font-bold font-headline mt-2">ChatForge AI: Build Your Own Assistant</p>
+                    <p className="text-muted-foreground">
+                        The next mega-collaboration with Butt Networks is almost here. ChatForge AI will empower you to create and deploy custom-trained AI chatbot assistants directly onto your website. Enhance user engagement, automate customer support, and provide instant answers, all powered by our cutting-edge AI.
+                    </p>
+                    <Button size="lg" disabled>
+                        Coming Soon...
+                    </Button>
+                </div>
+                <div className="relative aspect-video bg-secondary rounded-lg flex items-center justify-center p-8 shadow-2xl overflow-hidden">
+                    <Bot className="h-2/5 w-2/5 text-primary opacity-50" />
+                    <Settings className="absolute h-1/4 w-1/4 text-primary animate-spin-slow opacity-80" style={{ animationDuration: '5s' }} />
+                </div>
+            </div>
+        </div>
+      </section>
       
       {/* Services Section */}
-      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.2s' }}>
+      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.4s' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">What We Do</h2>
@@ -146,7 +168,7 @@ export default function Home() {
       </section>
 
       {/* AI Projects Section */}
-      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.4s' }}>
+      <section className="py-16 md:py-24 bg-secondary dark:bg-card scroll-animate" style={{ animationDelay: '0.6s' }}>
         <div className="container mx-auto px-4">
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline">Our AI-Powered Tools</h2>
@@ -182,7 +204,7 @@ export default function Home() {
       </section>
 
       {/* Collaboration Section */}
-      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.6s' }}>
+      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.8s' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
              <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
@@ -202,7 +224,7 @@ export default function Home() {
       </section>
       
       {/* Chohan Space I/O Section */}
-      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.8s' }}>
+      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '1.0s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
             Chohan Space I/O
@@ -217,7 +239,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-white dark:bg-black scroll-animate" style={{ animationDelay: '1.0s' }}>
+      <section className="py-16 md:py-24 bg-white dark:bg-black scroll-animate" style={{ animationDelay: '1.2s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Have a Project?</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto mb-8">
@@ -233,3 +255,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
