@@ -3,11 +3,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Code, Menu, Lock, ChevronDown, Users } from 'lucide-react';
+import { Code, Menu, Lock, ChevronDown, Users, Home, Bot, FileText, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, type ElementType } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +21,10 @@ import { ThemeToggle } from './ThemeToggle';
 
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/projects', label: 'AI Tools', icon: Bot },
+  { href: '/blog', label: 'Blog', icon: FileText },
+  { href: '/contact', label: 'Contact', icon: Phone },
 ];
 
 const aiTools = [
@@ -48,25 +49,8 @@ export function Header() {
     return null;
   }
 
-  const NavLink = ({ href, label, isMobile = false }: { href: string; label: string; isMobile?: boolean }) => {
-    const isActive = pathname === href;
-    return (
-      <Link
-        href={href}
-        onClick={() => isMobile && setSheetOpen(false)}
-        className={cn(
-          "transition-colors hover:text-primary",
-          isActive ? "text-primary font-semibold" : "text-muted-foreground",
-          isMobile ? "text-lg block py-2" : "text-sm"
-        )}
-      >
-        {label}
-      </Link>
-    );
-  };
-  
-  const SpecialLink = ({ href, label, icon: Icon, isMobile = false }: { href: string; label: string; icon: React.ElementType, isMobile?: boolean }) => {
-    const isActive = pathname.startsWith(href);
+  const NavLink = ({ href, label, icon: Icon, isMobile = false }: { href: string; label: string; icon: ElementType; isMobile?: boolean }) => {
+    const isActive = (href === "/" && pathname === "/") || (href !== "/" && pathname.startsWith(href));
     return (
       <Button asChild variant={isActive ? "secondary" : "ghost"} size={isMobile ? "default" : "sm"} className={cn(isMobile && "w-full justify-start")} onClick={() => isMobile && setSheetOpen(false)}>
         <Link href={href}>
@@ -74,8 +58,20 @@ export function Header() {
           {label}
         </Link>
       </Button>
-    )
-  }
+    );
+  };
+  
+  const SpecialLink = ({ href, label, icon: Icon, isMobile = false }: { href: string; label: string; icon: ElementType; isMobile?: boolean }) => {
+    const isActive = pathname.startsWith(href);
+    return (
+      <Button asChild variant="outline" size={isMobile ? "default" : "sm"} className={cn(isMobile && "w-full justify-start", isActive && "ring-2 ring-primary")} onClick={() => isMobile && setSheetOpen(false)}>
+        <Link href={href}>
+          <Icon className="mr-2 h-4 w-4" />
+          {label}
+        </Link>
+      </Button>
+    );
+  };
   
   const allTools = [...aiTools, ...ioTools];
   const isAiToolsActive = pathname.startsWith('/tool') || pathname.startsWith('/io');
@@ -88,14 +84,11 @@ export function Header() {
           <span>Chohan Space</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full flex items-center gap-2 hover:bg-primary/20 transition-colors animate-pulse hover:animate-none">
-            <Users className="h-4 w-4" />
-            <span>We are proudly collaborating with Butt Networks</span>
-          </a>
+        <nav className="hidden items-center gap-2 md:flex">
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className={cn('text-sm', isAiToolsActive ? 'text-primary font-semibold' : 'text-muted-foreground')}>
+              <Button variant="ghost" size="sm" className={cn('text-sm font-medium', isAiToolsActive ? 'text-primary' : 'text-muted-foreground')}>
                 AI Tools <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -118,7 +111,7 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {navLinks.map((link) => (
+          {navLinks.filter(l => l.label !== 'AI Tools').map((link) => (
             <NavLink key={link.href} {...link} />
           ))}
           
@@ -155,7 +148,11 @@ export function Header() {
                       <p className="text-sm font-semibold text-muted-foreground mb-2">AI Tools</p>
                       <ScrollArea className="flex-grow h-48">
                         <div className="flex flex-col gap-1 pr-4">
-                            {allTools.map(link => <NavLink key={link.href} {...link} isMobile />)}
+                            {allTools.map(link => 
+                                <Button key={link.href} asChild variant="ghost" size="default" className="w-full justify-start" onClick={() => setSheetOpen(false)}>
+                                    <Link href={link.href}>{link.label}</Link>
+                                </Button>
+                            )}
                         </div>
                       </ScrollArea>
                     </div>

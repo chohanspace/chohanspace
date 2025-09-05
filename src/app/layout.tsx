@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { Chatbot } from '@/components/Chatbot';
+import { CollaborationBanner } from '@/components/CollaborationBanner';
 
 export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
@@ -35,6 +36,7 @@ export default function RootLayout({
         >
             <ScrollProgress />
             <Header />
+            <CollaborationBanner />
             <main className="flex-grow">{children}</main>
             <Footer />
             <Chatbot />
