@@ -9,6 +9,7 @@ import { generateStory as generateStoryFlow, type StoryInput } from '@/ai/flows/
 import { generateCaseStudy as generateCaseStudyFlow, type CaseStudyInput } from '@/ai/flows/case-study-generator';
 import { predictLaunchSuccess as predictLaunchSuccessFlow, type LaunchSuccessInput } from '@/ai/flows/launch-success-predictor';
 import { answerQuery as answerQueryFlow, type ChatbotInput } from '@/ai/flows/chatbot-assistant';
+import { personalizeContent as personalizeContentFlow, type PersonalizationInput } from '@/ai/flows/personalization-engine';
 import { z } from 'zod';
 import { sendEmail } from '@/lib/email';
 
@@ -186,6 +187,29 @@ export async function answerQuery(input: ChatbotInput) {
         return result;
     } catch (error) {
         console.error("Error answering query:", error);
+        return null;
+    }
+}
+
+const personalizationInputSchema = z.object({
+    userHistory: z.array(z.string()),
+    userLocation: z.string().optional(),
+    originalHeadline: z.string(),
+});
+
+export async function personalizeContentAction(input: PersonalizationInput) {
+    const parsedInput = personalizationInputSchema.safeParse(input);
+
+    if (!parsedInput.success) {
+        console.error("Invalid input for content personalization", parsedInput.error);
+        return null;
+    }
+
+    try {
+        const result = await personalizeContentFlow(parsedInput.data);
+        return result;
+    } catch (error) {
+        console.error("Error personalizing content:", error);
         return null;
     }
 }

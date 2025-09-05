@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Code, Menu, Lock, ChevronDown, Users, Home, Bot, FileText, Phone } from 'lucide-react';
+import { Code, Menu, Lock, ChevronDown, Users, Home, Bot, FileText, Phone, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -26,6 +26,10 @@ const navLinks = [
   { href: '/blog', label: 'Blog', icon: FileText },
   { href: '/contact', label: 'Contact', icon: Phone },
 ];
+
+const premierTools = [
+    { href: '/tool/personalization-engine', label: 'Personalization Engine' },
+]
 
 const aiTools = [
     { href: '/tool/content-suggester', label: 'Content Suggester' },
@@ -73,7 +77,7 @@ export function Header() {
     );
   };
   
-  const allTools = [...aiTools, ...ioTools];
+  const allTools = [...premierTools, ...aiTools, ...ioTools];
   const isAiToolsActive = pathname.startsWith('/tool') || pathname.startsWith('/io');
 
   return (
@@ -93,7 +97,17 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <ScrollArea className="h-auto max-h-72 w-56">
+                <ScrollArea className="h-auto max-h-80 w-60">
+                    <DropdownMenuLabel>Premier Tools</DropdownMenuLabel>
+                    {premierTools.map((feature) => (
+                        <DropdownMenuItem key={feature.href} asChild>
+                            <Link href={feature.href} className="font-semibold text-primary focus:text-primary">
+                                <BrainCircuit className="mr-2 h-4 w-4" />
+                                {feature.label}
+                            </Link>
+                        </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
                     <DropdownMenuLabel>Standard Tools</DropdownMenuLabel>
                     {aiTools.map((feature) => (
                         <DropdownMenuItem key={feature.href} asChild>

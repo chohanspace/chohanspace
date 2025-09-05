@@ -56,7 +56,7 @@ export default function Home() {
             Building Exceptional Digital Experiences
           </h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground mb-8">
-            Chohan Space crafts intelligent, high-performance websites and applications that drive results, in proud collaboration with Butt Networks.
+            Chohan Space crafts intelligent, high-performance websites and applications that drive results, in proud collaboration with Butt Networks. Discover our new premier AI tool, the Personalization Engine.
           </p>
           <Button asChild size="lg">
             <Link href="/projects">
@@ -89,8 +89,8 @@ export default function Home() {
                 <li>A/B testing and performance insights.</li>
               </ul>
               <Button asChild>
-                <Link href="/projects">
-                  Learn More <ArrowRight className="ml-2" />
+                <Link href="/tool/personalization-engine">
+                  Use The Tool <ArrowRight className="ml-2" />
                 </Link>
               </Button>
             </div>
