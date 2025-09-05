@@ -8,14 +8,15 @@ import { X, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function CollaborationBanner() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // This code runs only on the client, after the initial render.
     const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
-    if (hasBeenDismissed) {
-      setIsVisible(false);
+    if (!hasBeenDismissed) {
+      setIsVisible(true);
     }
-  }, []);
+  }, []); // The empty dependency array ensures this runs only once on mount.
 
   const handleDismiss = () => {
     sessionStorage.setItem('collabBannerDismissed', 'true');
