@@ -11,14 +11,10 @@ export function CollaborationBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // We wrap this in a setTimeout to ensure the animation is visible on first load.
-    const timer = setTimeout(() => {
-        const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
-        if (!hasBeenDismissed) {
-            setIsVisible(true);
-        }
-    }, 500); // Delay appearance slightly for effect
-    return () => clearTimeout(timer);
+    const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
+    if (!hasBeenDismissed) {
+      setIsVisible(true);
+    }
   }, []);
 
   const handleDismiss = () => {
@@ -26,11 +22,15 @@ export function CollaborationBanner() {
     setIsVisible(false);
   };
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <div
       className={cn(
         "relative bg-secondary text-secondary-foreground transition-all duration-500 ease-in-out overflow-hidden",
-        isVisible ? "max-h-40 py-3 animate-in slide-in-from-top-12" : "max-h-0 py-0 animate-out slide-out-to-top-12"
+        isVisible ? "max-h-40 py-3 animate-in slide-in-from-top-full" : "max-h-0 py-0 animate-out slide-out-to-top-full"
       )}
     >
       <div className="container mx-auto px-4">
