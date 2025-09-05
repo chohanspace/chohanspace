@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, AlertTriangle, Gauge } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users } from 'lucide-react';
 import Link from 'next/link';
 
 const aiFeatures = [
@@ -148,9 +148,29 @@ export default function Home() {
             </div>
         </div>
       </section>
+
+      {/* Collaboration Section */}
+      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.6s' }}>
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+             <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
+                <Users size={32} />
+             </div>
+            <h2 className="text-3xl md:text-4xl font-bold font-headline">In Collaboration With Butt Networks</h2>
+            <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
+              Chohan Space is proud to partner with Butt Networks, a leader in innovative web development. Led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir, this collaboration combines our strengths to push the boundaries of digital experiences.
+            </p>
+            <Button asChild size="lg" className="mt-8">
+                <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer">
+                    Visit Butt Networks <ArrowRight className="ml-2" />
+                </a>
+            </Button>
+          </div>
+        </div>
+      </section>
       
       {/* Chohan Space I/O Section */}
-      <section className="py-16 md:py-24 bg-white dark:bg-black scroll-animate" style={{ animationDelay: '0.6s' }}>
+      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.8s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
             Chohan Space I/O
@@ -165,7 +185,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.8s' }}>
+      <section className="py-16 md:py-24 bg-white dark:bg-black scroll-animate" style={{ animationDelay: '1.0s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Have a Project?</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto mb-8">

@@ -44,9 +44,11 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Next.js](https://nextjs.org/) - The React Framework
+* [Firebase](https://firebase.google.com/) - Backend and Database
+* [Tailwind CSS](https://tailwindcss.com/) - For styling
+* [ShadCN UI](https://ui.shadcn.com/) - UI Components
+* [Genkit](https://firebase.google.com/docs/genkit) - AI Toolkit
 
 ## Contributing
 
@@ -70,4 +72,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 * Hat tip to anyone whose code was used
 * Inspiration
+* Proudly collaborating with [Butt Networks](https://buttnetworks.com), led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir.
 * etc
