@@ -38,7 +38,7 @@ export function CollaborationCelebration() {
                     </div>
                 </div>
             </div>
-          <DialogTitle className="text-center text-2xl font-bold font-headline">A New Partnership!</DialogTitle>
+          <DialogTitle className="text-center text-2xl font-bold font-headline">A Powerful New Partnership!</DialogTitle>
           <DialogDescription className="text-center">
             Chohan Space is thrilled to announce our collaboration with Butt Networks, led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir, to forge the future of the web.
           </DialogDescription>
@@ -54,3 +54,5 @@ export function CollaborationCelebration() {
     </Dialog>
   );
 }
+
+    

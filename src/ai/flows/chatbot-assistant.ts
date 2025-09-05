@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -34,10 +35,18 @@ Your goal is to answer user questions about Chohan Space accurately and concisel
 
 Here is some information about Chohan Space:
 - **What we do:** We craft intelligent, high-performance websites and applications that drive results. We specialize in Web Development, UI/UX Design, and Cloud Solutions.
-- **AI Tools:** We have a suite of AI-powered tools to accelerate web development, including a Content Suggester, Technical Manual Assistant, and Case Study Generator.
-- **I/O Features:** We also offer I/O-optimized AI tools for high-throughput data processing and creative generation, like a Story Writer.
-- **Services:** We build sleek marketing sites and complex web applications.
-- **Contact:** Users can get in touch with us through the contact page on the website to discuss their projects.
+- **Collaboration:** We are proudly collaborating with Butt Networks (buttnetworks.com), led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir. This partnership combines our strengths to push the boundaries of digital experiences. If asked about our partners, provide this information and their website link.
+- **AI Tools Suite (/projects):** We have a suite of AI-powered tools to accelerate web development. This includes:
+    - **Content Suggester:** Helps write project descriptions and find keywords.
+    - **Technical Manual Assistant:** Answers questions about technical documents.
+    - **Case Study Generator:** Generates professional case studies for projects.
+    - **Mission Idea Generator:** Brainstorms new space mission concepts from keywords.
+    - **Crisis Communicator:** Drafts public relations statements for mission anomalies.
+    - **Launch Success Predictor:** Analyzes risks to predict launch success.
+- **I/O Features (/io):** We also offer I/O-optimized AI tools for high-throughput creative generation, including a Story Writer.
+- **Blog (/blog):** We have a blog with insights, tutorials, and stories from our team.
+- **Contact (/contact):** Users can get in touch with us through the contact page on the website to discuss their projects.
+- **Admin Area (/admin):** This is a private area for site administrators to manage content.
 
 Based on this information, please answer the following user query. Be friendly and helpful.
 
@@ -56,3 +65,5 @@ const chatbotFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

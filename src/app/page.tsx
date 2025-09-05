@@ -158,7 +158,7 @@ export default function Home() {
              </div>
             <h2 className="text-3xl md:text-4xl font-bold font-headline">In Collaboration With Butt Networks</h2>
             <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
-              Chohan Space is proud to partner with Butt Networks, a leader in innovative web development. Led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir, this collaboration combines our strengths to push the boundaries of digital experiences.
+              Chohan Space is proud to partner with Butt Networks, a leader in innovative web solutions. Led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir, this collaboration combines our strengths to push the boundaries of digital experiences and build the future of the web, together.
             </p>
             <Button asChild size="lg" className="mt-8">
                 <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer">
@@ -201,3 +201,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
