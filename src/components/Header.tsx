@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Code, Menu, Lock, ChevronDown } from 'lucide-react';
+import { Code, Menu, Lock, ChevronDown, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -89,6 +89,10 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
+          <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full flex items-center gap-2 hover:bg-primary/20 transition-colors animate-pulse hover:animate-none">
+            <Users className="h-4 w-4" />
+            <span>We are proudly collaborating with Butt Networks</span>
+          </a>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className={cn('text-sm', isAiToolsActive ? 'text-primary font-semibold' : 'text-muted-foreground')}>

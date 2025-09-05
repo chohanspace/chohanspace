@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { Chatbot } from '@/components/Chatbot';
-import { CollaborationCelebration } from '@/components/CollaborationCelebration';
 
 export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
@@ -40,7 +39,6 @@ export default function RootLayout({
             <Footer />
             <Chatbot />
             <Toaster />
-            <CollaborationCelebration />
         </ThemeProvider>
       </body>
     </html>
