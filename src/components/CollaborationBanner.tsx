@@ -8,12 +8,12 @@ import { X, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function CollaborationBanner() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
-    if (!hasBeenDismissed) {
-      setIsVisible(true);
+    if (hasBeenDismissed) {
+      setIsVisible(false);
     }
   }, []);
 
@@ -30,11 +30,11 @@ export function CollaborationBanner() {
     <div
       className={cn(
         "relative bg-secondary text-secondary-foreground transition-all duration-500 ease-in-out overflow-hidden",
-        isVisible ? "max-h-40 py-3 animate-in slide-in-from-top-full" : "max-h-0 py-0 animate-out slide-out-to-top-full"
+        "animate-in slide-in-from-top-full"
       )}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center text-center gap-4">
+        <div className="flex items-center justify-center text-center gap-4 py-3">
           <Users className="h-6 w-6 shrink-0 text-primary hidden sm:block" />
           <p className="text-sm font-medium">
             We are proud to be collaborating with{' '}
