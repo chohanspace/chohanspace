@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,10 +11,14 @@ export function CollaborationBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
-    if (!hasBeenDismissed) {
-      setIsVisible(true);
-    }
+    // We wrap this in a setTimeout to ensure the animation is visible on first load.
+    const timer = setTimeout(() => {
+        const hasBeenDismissed = sessionStorage.getItem('collabBannerDismissed');
+        if (!hasBeenDismissed) {
+            setIsVisible(true);
+        }
+    }, 500); // Delay appearance slightly for effect
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDismiss = () => {
@@ -21,20 +26,16 @@ export function CollaborationBanner() {
     setIsVisible(false);
   };
 
-  if (!isVisible) {
-    return null;
-  }
-
   return (
     <div
       className={cn(
-        "relative bg-secondary text-secondary-foreground transition-all duration-300 ease-in-out",
-        isVisible ? "animate-in slide-in-from-top-full" : "animate-out slide-out-to-top-full"
+        "relative bg-secondary text-secondary-foreground transition-all duration-500 ease-in-out overflow-hidden",
+        isVisible ? "max-h-40 py-3 animate-in slide-in-from-top-12" : "max-h-0 py-0 animate-out slide-out-to-top-12"
       )}
     >
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-center text-center gap-4">
-          <Users className="h-5 w-5 shrink-0 text-primary hidden sm:block" />
+          <Users className="h-6 w-6 shrink-0 text-primary hidden sm:block" />
           <p className="text-sm font-medium">
             We are proud to be collaborating with{' '}
             <a
@@ -51,7 +52,7 @@ export function CollaborationBanner() {
             variant="ghost"
             size="icon"
             onClick={handleDismiss}
-            className="absolute top-1/2 right-2 -translate-y-1/2 h-8 w-8"
+            className="absolute top-1/2 right-2 -translate-y-1/2 h-8 w-8 shrink-0"
             aria-label="Dismiss banner"
           >
             <X className="h-4 w-4" />
