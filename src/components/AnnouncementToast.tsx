@@ -5,9 +5,9 @@ import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { Rocket } from 'lucide-react';
+import { Users } from 'lucide-react';
 
-const ANNOUNCEMENT_KEY = 'chohangenai-announcement-seen';
+const ANNOUNCEMENT_KEY = 'chohan-buttnetworks-collab-seen';
 
 export function AnnouncementToast() {
   const { toast } = useToast();
@@ -23,17 +23,17 @@ export function AnnouncementToast() {
             toast({
                 title: (
                     <div className="flex items-center gap-2">
-                        <Rocket className="h-5 w-5 text-primary" />
-                        <span className="font-bold">New! Introducing ChohanGenAI</span>
+                        <Users className="h-5 w-5 text-primary" />
+                        <span className="font-bold">Celebrating Our New Collaboration!</span>
                     </div>
                 ),
-                description: "Our new suite of generative AI tools is now live. Explore the future of creation.",
+                description: "Chohan Space is proud to partner with Butt Networks to build the future of the web.",
                 duration: 10000, // Keep it on screen for 10 seconds
                 action: (
                     <Button asChild size="sm">
-                        <Link href="https://cga.thechohan.space" target="_blank" rel="noopener noreferrer">
-                            Try Now
-                        </Link>
+                        <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer">
+                            Learn More
+                        </a>
                     </Button>
                 ),
             });
