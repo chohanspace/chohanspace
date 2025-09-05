@@ -56,7 +56,7 @@ export default function Home() {
             Building Exceptional Digital Experiences
           </h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground mb-8">
-            Chohan Space crafts intelligent, high-performance websites and applications that drive results.
+            Chohan Space crafts intelligent, high-performance websites and applications that drive results, in proud collaboration with Butt Networks.
           </p>
           <Button asChild size="lg">
             <Link href="/projects">
