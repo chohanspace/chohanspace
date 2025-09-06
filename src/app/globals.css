@@ -134,3 +134,77 @@
     opacity: 0;
   }
 }
+
+/* Hero Background Animation */
+.animation-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.anim-element {
+    position: absolute;
+    color: hsl(var(--primary) / 0.2);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    opacity: 0;
+}
+
+.anim-laptop {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-name: rotate-laptop;
+    animation-duration: 12s;
+}
+
+.anim-code {
+    font-size: 1rem;
+    animation-name: fly-code;
+    animation-duration: 6s;
+    animation-delay: calc(var(--delay) * -1s);
+}
+
+.anim-monitor {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation-name: show-website;
+    animation-duration: 12s;
+}
+
+@keyframes rotate-laptop {
+    0%, 100% { transform: translate(-50%, -50%) rotateY(0deg) scale(1); opacity: 1; }
+    40% { transform: translate(-50%, -50%) rotateY(360deg) scale(1.1); opacity: 1; }
+    50% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    51%, 100% { opacity: 0; }
+}
+
+@keyframes show-website {
+    0%, 50% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    80%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes fly-code {
+    0% {
+        opacity: 0;
+        transform: translate(var(--start-x), var(--start-y)) scale(0.5);
+    }
+    10%, 40% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    50%, 100% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.5);
+    }
+}

@@ -1,7 +1,8 @@
 
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit, Bot, Settings } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit, Bot, Settings, Monitor, Laptop } from 'lucide-react';
 import Link from 'next/link';
 
 const aiFeatures = [
@@ -31,12 +32,42 @@ const aiFeatures = [
     },
 ];
 
+const codeSnippets = [
+  { char: '{...}', delay: 0, x: '-150px', y: '120px' },
+  { char: '</>', delay: 1, x: '150px', y: '-100px' },
+  { char: '() =>', delay: 2, x: '180px', y: '80px' },
+  { char: 'npm i', delay: 3, x: '-180px', y: '-90px' },
+  { char: 'CSS', delay: 4, x: '-100px', y: '-150px' },
+  { char: 'git push', delay: 5, x: '100px', y: '150px' },
+]
+
 export default function Home() {
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background dark:bg-black py-16">
+        <div className="animation-container">
+            <Laptop className="anim-element anim-laptop" strokeWidth={0.5} />
+            <Monitor className="anim-element anim-monitor" strokeWidth={0.5} />
+            {codeSnippets.map(snippet => (
+                <span 
+                    key={snippet.char}
+                    className="anim-element anim-code" 
+                    style={{
+                        top: '50%',
+                        left: '50%',
+                        // @ts-ignore
+                        '--delay': snippet.delay,
+                        '--start-x': snippet.x,
+                        '--start-y': snippet.y,
+                    }}
+                >
+                    {snippet.char}
+                </span>
+            ))}
+        </div>
+
         <div className="container mx-auto px-4 z-10 animate-fadeIn">
           <h1 className="text-5xl md:text-7xl font-extrabold font-headline mb-4 tracking-tight text-foreground" style={{fontWeight: 1000}}>
             Building Exceptional Digital Experiences
