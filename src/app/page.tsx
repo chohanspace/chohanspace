@@ -36,21 +36,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center text-white overflow-hidden bg-background dark:bg-black py-16">
-        <div className="absolute inset-0 z-0 hero-bubbles">
-          <ul className="circles">
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-          </ul>
-        </div>
+      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background dark:bg-black py-16">
         <div className="container mx-auto px-4 z-10 animate-fadeIn">
           <h1 className="text-5xl md:text-7xl font-extrabold font-headline mb-4 tracking-tight text-foreground" style={{fontWeight: 1000}}>
             Building Exceptional Digital Experiences

@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { Chatbot } from '@/components/Chatbot';
 import { CollaborationBanner } from '@/components/CollaborationBanner';
+import { CursorTrail } from '@/components/CursorTrail';
 
 export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
@@ -37,6 +38,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
+            <CursorTrail />
             <ScrollProgress />
             <Header />
             <CollaborationBanner />
