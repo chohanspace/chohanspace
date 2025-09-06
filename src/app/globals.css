@@ -110,10 +110,11 @@
 }
 
 .cursor-dot {
-  width: 8px;
-  height: 8px;
-  background-color: hsla(var(--primary) / 0.5);
-  transition: transform 0.1s ease-out;
+  width: 24px;
+  height: 24px;
+  border: 2px solid hsla(var(--primary) / 0.5);
+  background-color: transparent;
+  transition: transform 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out;
 }
 
 .cursor-ripple {
