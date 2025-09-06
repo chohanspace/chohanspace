@@ -81,18 +81,15 @@
   animation: spin 3s linear infinite;
 }
 
-/* Floating Circles Background Animation */
-@keyframes animate-circles {
-    0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-        border-radius: 0;
-    }
-    100% {
-        transform: translateY(-1000px) rotate(720deg);
-        opacity: 0;
-        border-radius: 50%;
-    }
+/* Interactive Bubbles Background Animation */
+.hero-bubbles {
+  --bubble-bg: hsla(var(--primary) / 0.1);
+  --bubble-bg-hover: hsla(var(--primary) / 0.3);
+}
+
+.dark .hero-bubbles {
+    --bubble-bg: rgba(255, 255, 255, 0.1);
+    --bubble-bg-hover: rgba(255, 255, 255, 0.2);
 }
 
 .circles {
@@ -110,10 +107,31 @@
     list-style: none;
     width: 20px;
     height: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--bubble-bg);
     animation: animate-circles 25s linear infinite;
     bottom: -150px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
+
+.hero-bubbles:hover .circles li {
+    background-color: var(--bubble-bg-hover);
+}
+
+
+@keyframes animate-circles {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
 
 .circles li:nth-child(1) {
     left: 25%;

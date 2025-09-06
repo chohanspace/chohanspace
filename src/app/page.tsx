@@ -37,7 +37,7 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center text-white overflow-hidden bg-background dark:bg-black py-16">
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 hero-bubbles">
           <ul className="circles">
               <li></li>
               <li></li>
@@ -255,5 +255,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
