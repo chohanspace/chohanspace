@@ -1,11 +1,15 @@
+
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export function CursorTrail() {
   const dotRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
     const handleMouseMove = (e: MouseEvent) => {
       if (dotRef.current) {
         dotRef.current.style.left = `${e.clientX}px`;
@@ -34,5 +38,9 @@ export function CursorTrail() {
     };
   }, []);
 
+  if (!isMounted) {
+    return null;
+  }
+  
   return <div ref={dotRef} className="cursor-dot"></div>;
 }

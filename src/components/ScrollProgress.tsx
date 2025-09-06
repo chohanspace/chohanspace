@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,8 +7,11 @@ import { cn } from '@/lib/utils';
 
 export function ScrollProgress() {
   const [scrollTop, setScrollTop] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     const handleScroll = () => {
       const scrollableHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrolled = window.scrollY;
@@ -16,7 +20,6 @@ export function ScrollProgress() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    // Initial call to set position correctly on page load
     handleScroll();
 
     return () => {
@@ -24,12 +27,14 @@ export function ScrollProgress() {
     };
   }, []);
 
+  if (!isMounted) {
+      return null;
+  }
+
   return (
     <div className="fixed top-0 left-0 h-full w-4 md:w-6 z-50 pointer-events-none hidden md:block">
-      {/* Vertical Line */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-[1px] bg-border/50"></div>
       
-      {/* Moving Gear Icon */}
       <div
         className="absolute left-1/2 -translate-x-1/2 transition-all duration-150 ease-out"
         style={{ top: `calc(${scrollTop}% - 12px)` }}
