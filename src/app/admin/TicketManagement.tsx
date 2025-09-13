@@ -5,9 +5,9 @@ import { useState, useMemo } from 'react';
 import type { Ticket } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { createTicket, deleteTicket, manuallyVerifyTicket, manuallyCancelTicket, markTicketAsCompleted } from './actions';
+import { createTicket, deleteTicket, manuallyCancelTicket, markTicketAsCompleted, sendDeliveryEmail } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server, CheckCheck, Link2 } from 'lucide-react';
+import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Briefcase, DollarSign, Globe, Server, CheckCheck, Link2, Send } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,26 +69,29 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
         setIsCreating(false);
     };
 
-    const handleAction = async (action: 'delete' | 'verify' | 'cancel' | 'complete', ticketId: string) => {
+    const handleAction = async (action: 'delete' | 'verify' | 'cancel' | 'complete' | 'sendEmail', ticketId: string) => {
         setIsActing(ticketId);
         let result;
         if (action === 'delete') {
             result = await deleteTicket(ticketId);
         } else if (action === 'verify') {
-            result = await manuallyVerifyTicket(ticketId);
+            // This is handled on the ticket page, but keeping for potential future use.
+            // result = await manuallyVerifyTicket(ticketId); 
         } else if (action === 'cancel') {
             result = await manuallyCancelTicket(ticketId);
-        } else { // complete
+        } else if (action === 'complete'){
             result = await markTicketAsCompleted(ticketId);
+        } else if (action === 'sendEmail') {
+            result = await sendDeliveryEmail(ticketId);
         }
 
-        if (result.success) {
+        if (result?.success) {
             toast({
                 title: 'Success',
-                description: `Ticket action successful.`,
+                description: result.message || `Ticket action successful.`,
             });
             onTicketChange();
-        } else {
+        } else if (result?.message) {
             toast({
                 title: 'Error',
                 description: result.message || 'Failed to perform action.',
@@ -153,6 +156,16 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent><p>Mark as Completed</p></TooltipContent>
+                                                </Tooltip>
+                                            )}
+                                             {ticket.status === 'Completed' && ticket.clientEmail && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleAction('sendEmail', ticket.id)} disabled={isActing === ticket.id}>
+                                                            {isActing === ticket.id ? <Loader2 className="animate-spin" /> : <Send className="h-4 w-4" />}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>Send Delivery Email</p></TooltipContent>
                                                 </Tooltip>
                                             )}
                                              {(ticket.status === 'Pending' || ticket.status === 'Verified') && (

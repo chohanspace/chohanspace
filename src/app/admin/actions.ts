@@ -226,34 +226,58 @@ export async function markTicketAsCompleted(ticketId: string) {
         await update(ticketRef, updates);
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
-
-        const ticketData = snapshot.val() as Ticket;
-        if (ticketData.clientEmail) {
-            const phoneNumber = "923399663310";
-            const message = `Hello, I'm ready to receive my completed project. My ticket ID is: ${ticketId}`;
-            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-            await sendEmail({
-                to: ticketData.clientEmail,
-                subject: `Your Project is Complete! (Ticket: ${ticketId})`,
-                text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. Please click the link below to receive your project deliverables on WhatsApp.\n\nReceive Your Order: ${whatsappLink}\n\nThank you for choosing Chohan Space.`,
-                html: `
-                    <p>Hello ${ticketData.clientName},</p>
-                    <p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed.</p>
-                    <p>Please click the button below to get in touch with us on WhatsApp to receive your final deliverables.</p>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="${whatsappLink}" target="_blank" style="background-color: #25D366; color: white; padding: 14px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 8px; font-weight: bold;">
-                            Receive Your Order on WhatsApp
-                        </a>
-                    </div>
-                    <p>Thank you for choosing Chohan Space.</p>
-                `,
-            });
-        }
-        
-        return { success: true, message: 'Ticket marked as completed and delivery email sent.' };
+        return { success: true, message: 'Ticket marked as completed.' };
     } catch (error) {
         console.error('Failed to mark ticket as completed:', error);
         return { success: false, message: 'A server error occurred.' };
+    }
+}
+
+export async function sendDeliveryEmail(ticketId: string) {
+    if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+    const snapshot = await get(ticketRef);
+
+    if (!snapshot.exists()) {
+        return { success: false, message: 'Ticket not found.' };
+    }
+    
+    const ticketData = snapshot.val() as Ticket;
+
+    if (!ticketData.clientEmail) {
+        return { success: false, message: 'No client email on file for this ticket.' };
+    }
+
+    if (ticketData.status !== 'Completed') {
+        return { success: false, message: 'Can only send delivery email for completed tickets.' };
+    }
+    
+    const phoneNumber = "923399663310";
+    const message = `Hello, I'm ready to receive my completed project. My ticket ID is: ${ticketId}`;
+    const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+    try {
+        await sendEmail({
+            to: ticketData.clientEmail,
+            subject: `Your Project is Complete! (Ticket: ${ticketId})`,
+            text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. Please click the link below to receive your project deliverables on WhatsApp.\n\nReceive Your Order: ${whatsappLink}\n\nThank you for choosing Chohan Space.`,
+            html: `
+                <p>Hello ${ticketData.clientName},</p>
+                <p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed.</p>
+                <p>Please click the button below to get in touch with us on WhatsApp to receive your final deliverables.</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${whatsappLink}" target="_blank" style="background-color: #25D366; color: white; padding: 14px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 8px; font-weight: bold;">
+                        Receive Your Order on WhatsApp
+                    </a>
+                </div>
+                <p>Thank you for choosing Chohan Space.</p>
+            `,
+        });
+        return { success: true, message: 'Delivery email sent successfully.' };
+    } catch (error) {
+        console.error('Failed to send delivery email:', error);
+        return { success: false, message: 'A server error occurred while sending the email.' };
     }
 }
