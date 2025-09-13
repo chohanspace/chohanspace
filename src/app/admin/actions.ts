@@ -229,15 +229,29 @@ export async function markTicketAsCompleted(ticketId: string) {
 
         const ticketData = snapshot.val() as Ticket;
         if (ticketData.clientEmail) {
+            const phoneNumber = "923399663310";
+            const message = `Hello, I'm ready to receive my completed project. My ticket ID is: ${ticketId}`;
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
             await sendEmail({
                 to: ticketData.clientEmail,
                 subject: `Your Project is Complete! (Ticket: ${ticketId})`,
-                text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. We will be in touch shortly with the final deliverables.\n\nThank you for choosing Chohan Space.`,
-                html: `<p>Hello ${ticketData.clientName},</p><p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed. We will be in touch shortly with the final deliverables.</p><p>Thank you for choosing Chohan Space.</p>`,
+                text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. Please click the link below to receive your project deliverables on WhatsApp.\n\nReceive Your Order: ${whatsappLink}\n\nThank you for choosing Chohan Space.`,
+                html: `
+                    <p>Hello ${ticketData.clientName},</p>
+                    <p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed.</p>
+                    <p>Please click the button below to get in touch with us on WhatsApp to receive your final deliverables.</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${whatsappLink}" target="_blank" style="background-color: #25D366; color: white; padding: 14px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 8px; font-weight: bold;">
+                            Receive Your Order on WhatsApp
+                        </a>
+                    </div>
+                    <p>Thank you for choosing Chohan Space.</p>
+                `,
             });
         }
         
-        return { success: true, message: 'Ticket marked as completed.' };
+        return { success: true, message: 'Ticket marked as completed and delivery email sent.' };
     } catch (error) {
         console.error('Failed to mark ticket as completed:', error);
         return { success: false, message: 'A server error occurred.' };
