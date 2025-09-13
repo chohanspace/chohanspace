@@ -9,3 +9,15 @@ export type BlogPost = {
   image: string;
   dataAiHint: string;
 };
+
+export type Ticket = {
+  id: string;
+  createdAt: string;
+  status: 'Pending' | 'Verified' | 'Cancelled';
+  clientName?: string;
+  clientEmail?: string;
+  clientPhone?: string;
+  cancellationReason?: string;
+  verifiedAt?: string;
+  cancelledAt?: string;
+};

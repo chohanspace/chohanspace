@@ -2,10 +2,11 @@
 'use server';
 
 import { database } from '@/lib/firebase';
-import { ref, remove, set, push, update, query, orderByChild, equalTo, get } from 'firebase/database';
+import { ref, remove, set, push, update, get } from 'firebase/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import type { BlogPost } from '@/lib/data';
+import type { BlogPost, Ticket } from '@/lib/data';
+import { sendEmail } from '@/lib/email';
 
 export async function deleteSubmission(submissionId: string) {
     if (!submissionId) {
@@ -101,5 +102,93 @@ export async function deleteBlogPost(postId: string) {
     } catch (error) {
         console.error('Failed to delete blog post from Firebase:', error);
         return { success: false, message: 'A server error occurred while deleting the post.' };
+    }
+}
+
+
+// Ticketing System Actions
+function generateTicketId() {
+    const randomPart = () => Math.random().toString(36).substring(2, 7);
+    return `cs-${randomPart()}-${randomPart()}`;
+}
+
+export async function createTicket() {
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketId = generateTicketId();
+    const newTicket: Ticket = {
+        id: ticketId,
+        createdAt: new Date().toISOString(),
+        status: 'Pending',
+    };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+
+    try {
+        await set(ticketRef, newTicket);
+        revalidatePath('/admin');
+        return { success: true, message: `Ticket ${ticketId} created successfully.`, ticketId };
+    } catch (error) {
+        console.error('Error creating ticket:', error);
+        return { success: false, message: 'A server error occurred while creating the ticket.' };
+    }
+}
+
+export async function deleteTicket(ticketId: string) {
+    if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+    try {
+        await remove(ticketRef);
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to delete ticket:', error);
+        return { success: false, message: 'A server error occurred while deleting the ticket.' };
+    }
+}
+
+export async function manuallyVerifyTicket(ticketId: string) {
+    if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+    const updates = {
+        status: 'Verified',
+        verifiedAt: new Date().toISOString(),
+        clientName: 'Manually Verified',
+        clientEmail: 'N/A',
+        clientPhone: 'N/A',
+    };
+
+    try {
+        await update(ticketRef, updates);
+        revalidatePath('/admin');
+        return { success: true, message: 'Ticket manually verified.' };
+    } catch (error) {
+        console.error('Failed to manually verify ticket:', error);
+        return { success: false, message: 'A server error occurred.' };
+    }
+}
+
+export async function manuallyCancelTicket(ticketId: string) {
+    if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+    const updates = {
+        status: 'Cancelled',
+        cancelledAt: new Date().toISOString(),
+        cancellationReason: 'Manually cancelled by admin.',
+    };
+
+    try {
+        await update(ticketRef, updates);
+        revalidatePath('/admin');
+        return { success: true, message: 'Ticket manually cancelled.' };
+    } catch (error) {
+        console.error('Failed to manually cancel ticket:', error);
+        return { success: false, message: 'A server error occurred.' };
     }
 }

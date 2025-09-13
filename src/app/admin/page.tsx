@@ -10,9 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { database } from '@/lib/firebase';
 import { ref, get, query } from 'firebase/database';
 import { SubmissionList } from './SubmissionList';
-import type { BlogPost } from '@/lib/data';
+import type { BlogPost, Ticket } from '@/lib/data';
 import BlogManagementList from './BlogManagementList';
 import { AddNewPost } from './AddNewPost';
+import { TicketManagement } from './TicketManagement';
 
 export type Submission = {
     name: string;
@@ -40,6 +41,7 @@ function AdminLogoutButton() {
 export default function AdminDashboard() {
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [posts, setPosts] = useState<BlogPost[]>([]);
+    const [tickets, setTickets] = useState<Ticket[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
@@ -55,10 +57,12 @@ export default function AdminDashboard() {
         try {
             const submissionsRef = ref(database, 'submissions');
             const postsRef = ref(database, 'blogPosts');
+            const ticketsRef = ref(database, 'tickets');
 
-            const [submissionsSnapshot, postsSnapshot] = await Promise.all([
+            const [submissionsSnapshot, postsSnapshot, ticketsSnapshot] = await Promise.all([
                 get(query(submissionsRef)),
-                get(query(postsRef))
+                get(query(postsRef)),
+                get(query(ticketsRef))
             ]);
 
             if (submissionsSnapshot.exists()) {
@@ -80,6 +84,16 @@ export default function AdminDashboard() {
             } else {
                 setPosts([]);
             }
+            
+            if (ticketsSnapshot.exists()) {
+                const ticketsData = ticketsSnapshot.val();
+                const ticketsList = Object.values(ticketsData as Record<string, Ticket>)
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                setTickets(ticketsList);
+            } else {
+                setTickets([]);
+            }
+
         } catch (error) {
             console.error("Error fetching data:", error);
             setError('Failed to fetch dashboard data.');
@@ -118,6 +132,9 @@ export default function AdminDashboard() {
             ) : (
                 <div className="grid gap-12">
                     <section>
+                        <TicketManagement initialTickets={tickets} onTicketChange={fetchData} />
+                    </section>
+                     <section>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold">Blog Posts</h2>
                             <AddNewPost onPostCreated={fetchData} />

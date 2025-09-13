@@ -26,11 +26,16 @@ export async function sendEmail(options: MailOptions) {
             user: EMAIL_USER,
             pass: EMAIL_PASS,
         },
+        // Add timeout options
+        connectionTimeout: 5000, // 5 seconds
+        greetingTimeout: 5000, // 5 seconds
+        socketTimeout: 5000, // 5 seconds
     });
 
     try {
+        await transporter.verify(); // Verify connection configuration
         await transporter.sendMail({
-            from: `"Chohan Space Assistant" <${EMAIL_FROM}>`,
+            from: `"Chohan Space" <${EMAIL_FROM}>`,
             to: options.to,
             subject: options.subject,
             text: options.text,
@@ -39,6 +44,6 @@ export async function sendEmail(options: MailOptions) {
         return { success: true, message: 'Email sent successfully.' };
     } catch (error) {
         console.error('Failed to send email:', error);
-        return { success: false, message: 'Failed to send email.' };
+        return { success: false, message: 'Failed to send email. Please check server logs for details.' };
     }
 }
