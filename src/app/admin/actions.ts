@@ -192,3 +192,41 @@ export async function manuallyCancelTicket(ticketId: string) {
         return { success: false, message: 'A server error occurred.' };
     }
 }
+
+export async function markTicketAsCompleted(ticketId: string) {
+    if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
+    if (!database) return { success: false, message: 'Database not configured.' };
+
+    const ticketRef = ref(database, `tickets/${ticketId}`);
+    
+    const snapshot = await get(ticketRef);
+    if (!snapshot.exists() || snapshot.val().status !== 'Verified') {
+        return { success: false, message: 'Only verified tickets can be marked as completed.' };
+    }
+
+    const updates = {
+        status: 'Completed',
+        completedAt: new Date().toISOString(),
+    };
+
+    try {
+        await update(ticketRef, updates);
+        revalidatePath('/admin');
+        revalidatePath(`/ticket/${ticketId}`);
+
+        const ticketData = snapshot.val() as Ticket;
+        if (ticketData.clientEmail) {
+            await sendEmail({
+                to: ticketData.clientEmail,
+                subject: `Your Project is Complete! (Ticket: ${ticketId})`,
+                text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. We will be in touch shortly with the final deliverables.\n\nThank you for choosing Chohan Space.`,
+                html: `<p>Hello ${ticketData.clientName},</p><p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed. We will be in touch shortly with the final deliverables.</p><p>Thank you for choosing Chohan Space.</p>`,
+            });
+        }
+        
+        return { success: true, message: 'Ticket marked as completed.' };
+    } catch (error) {
+        console.error('Failed to mark ticket as completed:', error);
+        return { success: false, message: 'A server error occurred.' };
+    }
+}

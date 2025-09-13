@@ -5,7 +5,7 @@ import type { Ticket } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TicketCancellationForm } from './TicketCancellationForm';
-import { XCircle, Ban } from 'lucide-react';
+import { XCircle, Ban, CheckCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -59,6 +59,18 @@ export default async function TicketCancelPage({ params }: TicketCancelPageProps
                     </div>
                     <h2 className="text-2xl font-bold mb-2">Ticket Already Cancelled</h2>
                     <p className="text-muted-foreground mb-4">This ticket (<span className="font-mono">{ticket.id}</span>) has already been cancelled.</p>
+                </CardContent>
+            );
+            break;
+        case 'Completed':
+             statusContent = (
+                <CardContent className="text-center py-10">
+                    <div className="mx-auto bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-full h-20 w-20 flex items-center justify-center mb-6">
+                        <CheckCheck size={40} />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Project Already Completed</h2>
+                    <p className="text-muted-foreground mb-4">This project (<span className="font-mono">{ticket.id}</span>) has been completed and can no longer be cancelled.</p>
+                    <p className="text-sm text-muted-foreground">Our agent has already finished the work. We will be in touch with you shortly.</p>
                 </CardContent>
             );
             break;

@@ -5,9 +5,9 @@ import { useState, useMemo } from 'react';
 import type { Ticket } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { createTicket, deleteTicket, manuallyVerifyTicket, manuallyCancelTicket } from './actions';
+import { createTicket, deleteTicket, manuallyVerifyTicket, manuallyCancelTicket, markTicketAsCompleted } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server } from 'lucide-react';
+import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server, CheckCheck } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,14 +20,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +37,8 @@ function getStatusBadge(status: Ticket['status']) {
             return <Badge className="bg-green-600 hover:bg-green-700"><CheckCircle className="mr-1 h-3 w-3" />Verified</Badge>;
         case 'Cancelled':
             return <Badge variant="destructive"><XCircle className="mr-1 h-3 w-3" />Cancelled</Badge>;
+        case 'Completed':
+            return <Badge className="bg-blue-600 hover:bg-blue-700"><CheckCheck className="mr-1 h-3 w-3" />Completed</Badge>;
         default:
             return <Badge variant="outline">Unknown</Badge>;
     }
@@ -74,15 +68,17 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
         setIsCreating(false);
     };
 
-    const handleAction = async (action: 'delete' | 'verify' | 'cancel', ticketId: string) => {
+    const handleAction = async (action: 'delete' | 'verify' | 'cancel' | 'complete', ticketId: string) => {
         setIsActing(ticketId);
         let result;
         if (action === 'delete') {
             result = await deleteTicket(ticketId);
         } else if (action === 'verify') {
             result = await manuallyVerifyTicket(ticketId);
-        } else { // cancel
+        } else if (action === 'cancel') {
             result = await manuallyCancelTicket(ticketId);
+        } else { // complete
+            result = await markTicketAsCompleted(ticketId);
         }
 
         if (result.success) {
@@ -146,7 +142,19 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        {ticket.status === 'Verified' && <CollapsibleTrigger asChild><Button variant="ghost" size="sm">Details</Button></CollapsibleTrigger>}
+                                        {(ticket.status === 'Verified' || ticket.status === 'Completed') && <CollapsibleTrigger asChild><Button variant="ghost" size="sm">Details</Button></CollapsibleTrigger>}
+                                        {ticket.status === 'Verified' && (
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleAction('complete', ticket.id)} disabled={isActing === ticket.id}>
+                                                            {isActing === ticket.id ? <Loader2 className="animate-spin" /> : <CheckCheck className="h-4 w-4" />}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>Mark as Completed</p></TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        )}
                                         <TooltipProvider>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -172,18 +180,18 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                 </div>
                                 <CollapsibleContent className="space-y-4 pt-4 mt-4 border-t">
                                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                        <div className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Type</p><p>{ticket.websiteType}</p></div></div>
-                                        <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Budget</p><p>{ticket.budget} PKR</p></div></div>
-                                        <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Domain</p><p>{ticket.hasDomain}</p></div></div>
-                                        <div className="flex items-center gap-2"><Server className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Hosting</p><p>{ticket.hasHosting}</p></div></div>
+                                        <div className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Type</p><p>{ticket.websiteType || 'N/A'}</p></div></div>
+                                        <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Budget</p><p>{ticket.budget ? `${ticket.budget} PKR` : 'N/A'}</p></div></div>
+                                        <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Domain</p><p>{ticket.hasDomain || 'N/A'}</p></div></div>
+                                        <div className="flex items-center gap-2"><Server className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Hosting</p><p>{ticket.hasHosting || 'N/A'}</p></div></div>
                                     </div>
                                     <div>
                                         <p className="font-semibold mb-1">Project Details</p>
-                                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{ticket.projectDetails}</p>
+                                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{ticket.projectDetails || 'N/A'}</p>
                                     </div>
                                      <div>
                                         <p className="font-semibold mb-1">Contact</p>
-                                        <p className="text-sm text-muted-foreground">{ticket.clientPhone}</p>
+                                        <p className="text-sm text-muted-foreground">{ticket.clientPhone || 'N/A'}</p>
                                     </div>
                                 </CollapsibleContent>
                             </Collapsible>

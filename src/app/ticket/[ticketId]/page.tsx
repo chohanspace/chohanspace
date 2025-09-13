@@ -5,7 +5,7 @@ import type { Ticket } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { TicketVerificationForm } from './TicketVerificationForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, XCircle, AlertTriangle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Clock, CheckCheck, Rocket } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -77,6 +77,19 @@ export default async function TicketPage({ params }: TicketPageProps) {
                         <p className="text-sm italic">Reason: "{ticket.cancellationReason}"</p>
                     )}
                 </CardContent>
+            );
+            break;
+        case 'Completed':
+            statusContent = (
+                 <CardContent className="text-center py-10">
+                    <div className="mx-auto bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 rounded-full h-20 w-20 flex items-center justify-center mb-6">
+                        <Rocket size={40} />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Project Completed!</h2>
+                    <p className="text-muted-foreground mb-1">Ticket ID: <span className="font-mono">{ticket.id}</span></p>
+                    <p className="text-muted-foreground mb-4">We're excited to share the final product with you soon.</p>
+                    <p>Thank you for collaborating with Chohan Space.</p>
+                 </CardContent>
             );
             break;
         default:

@@ -13,13 +13,14 @@ export type BlogPost = {
 export type Ticket = {
   id: string;
   createdAt: string;
-  status: 'Pending' | 'Verified' | 'Cancelled';
+  status: 'Pending' | 'Verified' | 'Cancelled' | 'Completed';
   clientName?: string;
   clientEmail?: string;
   clientPhone?: string;
   cancellationReason?: string;
   verifiedAt?: string;
   cancelledAt?: string;
+  completedAt?: string;
   // New project detail fields
   websiteType?: string;
   budget?: string;
