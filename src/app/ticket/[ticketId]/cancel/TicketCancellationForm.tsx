@@ -19,7 +19,7 @@ import { Info } from 'lucide-react';
 
 const formSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
-    email: z.string().email('Please enter a valid email.').optional(),
+    identity: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -31,7 +31,7 @@ export function TicketCancellationForm({ ticketId, status }: { ticketId: string;
     
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: { reason: '', email: '' },
+        defaultValues: { reason: '', identity: '' },
     });
 
     async function onSubmit(values: FormValues) {
@@ -63,14 +63,14 @@ export function TicketCancellationForm({ ticketId, status }: { ticketId: string;
                             <Info className="h-4 w-4" />
                             <AlertTitle>Identity Confirmation</AlertTitle>
                             <AlertDescription>
-                                To cancel a verified project, please enter the email address you used during verification.
+                                To cancel a verified project, please enter the email address or phone number you used during verification.
                             </AlertDescription>
                         </Alert>
-                         <FormField control={form.control} name="email" render={({ field }) => (
+                         <FormField control={form.control} name="identity" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Confirm Your Email</FormLabel>
+                                <FormLabel>Confirm Your Email or Phone Number</FormLabel>
                                 <FormControl>
-                                    <Input type="email" placeholder="Enter the email used to verify" {...field} />
+                                    <Input type="text" placeholder="Enter the email or phone used to verify" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

@@ -109,7 +109,7 @@ export async function verifyTicket(ticketId: string, data: unknown) {
 
 const cancellationSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
-    email: z.string().email('Please provide your email.').optional(),
+    identity: z.string().optional(),
 });
 
 export async function cancelTicket(ticketId: string, data: unknown) {
@@ -120,7 +120,7 @@ export async function cancelTicket(ticketId: string, data: unknown) {
         return { success: false, message: 'Invalid form data. Please provide a valid reason.' };
     }
 
-    const { reason, email } = parsed.data;
+    const { reason, identity } = parsed.data;
     const ticketRef = ref(database, `tickets/${ticketId}`);
 
     try {
@@ -139,13 +139,18 @@ export async function cancelTicket(ticketId: string, data: unknown) {
             return { success: false, message: 'This ticket has been completed and cannot be cancelled.' };
         }
 
-        // If ticket is verified, we must match the email
+        // If ticket is verified, we must match the identity (email or phone)
         if (ticketData.status === 'Verified') {
-            if (!email) {
-                return { success: false, message: 'Email confirmation is required to cancel a verified ticket.' };
+            if (!identity) {
+                return { success: false, message: 'Email or phone number is required to cancel a verified ticket.' };
             }
-            if (ticketData.clientEmail?.toLowerCase() !== email.toLowerCase()) {
-                return { success: false, message: 'The email address does not match the one on file for this ticket.' };
+            const normalizedIdentity = identity.trim().toLowerCase();
+            const normalizedEmail = ticketData.clientEmail?.trim().toLowerCase();
+            const normalizedPhone = ticketData.clientPhone?.replace(/\s+/g, ''); // Remove spaces for comparison
+            const normalizedInputPhone = identity.replace(/\s+/g, '');
+
+            if (normalizedIdentity !== normalizedEmail && normalizedInputPhone !== normalizedPhone) {
+                 return { success: false, message: 'The email or phone number does not match the one on file for this ticket.' };
             }
         }
 
@@ -162,10 +167,10 @@ export async function cancelTicket(ticketId: string, data: unknown) {
             to: ADMIN_EMAIL,
             subject: `Ticket Cancelled by Client: ${ticketId}`,
             text: `Ticket ${ticketId} was cancelled by the client. Reason: ${reason}`,
-            html: `<p>Ticket <strong>${ticketId}</strong> was cancelled by the client.</p><p><b>Client:</b> ${ticketData.clientName || email}</p><p><b>Reason:</b> ${reason}</p>`,
+            html: `<p>Ticket <strong>${ticketId}</strong> was cancelled by the client.</p><p><b>Client:</b> ${ticketData.clientName || identity}</p><p><b>Reason:</b> ${reason}</p>`,
         });
 
-        const emailToSendTo = ticketData.clientEmail || email;
+        const emailToSendTo = ticketData.clientEmail;
         if (emailToSendTo) {
              await sendEmail({
                 to: emailToSendTo,
