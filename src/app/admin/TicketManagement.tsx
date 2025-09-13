@@ -29,6 +29,13 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import Link from 'next/link';
 
+function WhatsAppIcon() {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle">
+            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zM9.91 17.21a.52.52 0 0 1-.75-.04l-1.3-1.42a.51.51 0 0 1 0-.72l4.24-4.24a.51.51 0 0 1 .72 0l1.42 1.3a.51.51 0 0 1 0 .72l-4.24 4.24a.52.52 0 0 1-.39.12z" fill="#25D366" stroke="none" />
+        </svg>
+    )
+}
 
 function getStatusBadge(status: Ticket['status']) {
     switch (status) {
@@ -109,6 +116,17 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
         });
     }
 
+    const handleWhatsAppRedirect = (ticket: Ticket) => {
+        if (!ticket.clientPhone || !ticket.clientName) {
+            toast({ title: "Error", description: "Client phone number or name is missing.", variant: "destructive"});
+            return;
+        }
+        const phoneNumber = ticket.clientPhone.replace(/[^0-9]/g, '');
+        const message = `Hello ${ticket.clientName}, your project (Ticket: ${ticket.id}) is complete. We're excited to deliver the final product to you. Please let us know when you are ready.`;
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
     const sortedTickets = useMemo(() => {
         return [...initialTickets].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [initialTickets]);
@@ -166,6 +184,16 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent><p>Send Delivery Email</p></TooltipContent>
+                                                </Tooltip>
+                                            )}
+                                            {ticket.status === 'Completed' && ticket.clientPhone && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleWhatsAppRedirect(ticket)}>
+                                                           <WhatsAppIcon />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>Contact Client on WhatsApp</p></TooltipContent>
                                                 </Tooltip>
                                             )}
                                              {(ticket.status === 'Pending' || ticket.status === 'Verified') && (
