@@ -21,3 +21,10 @@ export type Ticket = {
   verifiedAt?: string;
   cancelledAt?: string;
 };
+
+export type Submission = {
+    name: string;
+    email: string;
+    message: string;
+    id: string;
+};
