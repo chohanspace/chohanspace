@@ -58,23 +58,21 @@ export async function createBlogPost(prevState: { success: boolean; message: str
     const blogData = parsed.data;
     const slug = slugify(blogData.title);
 
-    const postsRef = ref(database, 'blogPosts');
-    const newPostRef = push(postsRef);
+    const newPostRef = push(ref(database, 'blogPosts'));
     const newPostKey = newPostRef.key;
 
     if (!newPostKey) {
         return { success: false, message: 'Could not generate a unique key for the new post.' };
     }
 
-    const newPost: BlogPost = {
-        id: newPostKey,
+    const newPost: Omit<BlogPost, 'id'> = {
         ...blogData,
         slug,
         date: new Date().toISOString(),
     };
 
     try {
-        await set(newPostRef, newPost);
+        await set(ref(database, `blogPosts/${newPostKey}`), { ...newPost, id: newPostKey });
 
         revalidatePath('/blog');
         revalidatePath(`/blog/${slug}`);
@@ -85,6 +83,7 @@ export async function createBlogPost(prevState: { success: boolean; message: str
         return { success: false, message: 'A server error occurred.' };
     }
 }
+
 
 export async function deleteBlogPost(postId: string) {
     if (!postId) {
@@ -142,6 +141,7 @@ export async function deleteTicket(ticketId: string) {
     try {
         await remove(ticketRef);
         revalidatePath('/admin');
+        revalidatePath(`/ticket/${ticketId}`);
         return { success: true };
     } catch (error) {
         console.error('Failed to delete ticket:', error);

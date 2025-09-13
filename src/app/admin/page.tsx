@@ -2,7 +2,7 @@
 import { cookies } from 'next/headers';
 import * as jose from 'jose';
 import { database } from '@/lib/firebase';
-import { ref, get, query } from 'firebase/database';
+import { ref, get, query, orderByChild } from 'firebase/database';
 import type { BlogPost, Ticket, Submission } from '@/lib/data';
 import AdminDashboard from './Dashboard';
 import AdminLoginPage from './LoginPage';
@@ -45,7 +45,11 @@ async function getDashboardData() {
         let posts: BlogPost[] = [];
         if (postsSnapshot.exists()) {
             const postsData = postsSnapshot.val();
-            posts = Object.values(postsData as Record<string, BlogPost>)
+            posts = Object.values(postsData as Record<string, Omit<BlogPost, 'id'>>)
+                .map((post, index) => ({
+                    ...post,
+                    id: Object.keys(postsData)[index],
+                }))
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         }
         

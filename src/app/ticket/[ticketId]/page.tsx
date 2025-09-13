@@ -18,7 +18,8 @@ async function getTicket(ticketId: string): Promise<Ticket | null> {
     const ticketRef = ref(database, `tickets/${ticketId}`);
     const snapshot = await get(ticketRef);
     if (snapshot.exists()) {
-        return snapshot.val() as Ticket;
+        const ticketData = snapshot.val();
+        return { id: ticketId, ...ticketData };
     }
     return null;
 }
@@ -41,8 +42,8 @@ export default async function TicketPage({ params }: TicketPageProps) {
                         <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
                             <Clock size={32} />
                         </div>
-                        <CardTitle className="text-center">Ticket Verification Required</CardTitle>
-                        <CardDescription className="text-center">Please enter your details to verify this ticket.</CardDescription>
+                        <CardTitle className="text-center">Project Details Submission</CardTitle>
+                        <CardDescription className="text-center">Please enter your details to verify this ticket and submit your project requirements.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <TicketVerificationForm ticketId={ticket.id} />
@@ -56,11 +57,11 @@ export default async function TicketPage({ params }: TicketPageProps) {
                     <div className="mx-auto bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400 rounded-full h-20 w-20 flex items-center justify-center mb-6">
                         <CheckCircle size={40} />
                     </div>
-                    <h2 className="text-2xl font-bold mb-2">Ticket Verified!</h2>
+                    <h2 className="text-2xl font-bold mb-2">Project Details Submitted!</h2>
                     <p className="text-muted-foreground mb-1">Ticket ID: <span className="font-mono">{ticket.id}</span></p>
                     {ticket.clientName && <p className="text-muted-foreground mb-1">Name: {ticket.clientName}</p>}
                     {ticket.clientEmail && <p className="text-muted-foreground mb-4">Email: {ticket.clientEmail}</p>}
-                    <p>Thank you. Your ticket has been confirmed.</p>
+                    <p>Thank you. Your project requirements have been submitted.</p>
                  </CardContent>
             );
             break;
@@ -92,15 +93,15 @@ export default async function TicketPage({ params }: TicketPageProps) {
 
 
     return (
-        <div className="flex items-center justify-center min-h-[calc(100vh-200px)] animate-fadeIn">
-            <div className="w-full max-w-md">
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 animate-fadeIn">
+            <div className="w-full max-w-2xl">
                 <Card>
                     {statusContent}
                 </Card>
                  {ticket.status === 'Pending' && (
                     <div className="text-center mt-4">
                         <Button variant="link" asChild>
-                           <Link href={`/ticket/${ticket.id}/cancel`}>Need to cancel this ticket?</Link>
+                           <Link href={`/ticket/${ticket.id}/cancel`}>Need to cancel this request?</Link>
                         </Button>
                     </div>
                 )}

@@ -20,6 +20,12 @@ export type Ticket = {
   cancellationReason?: string;
   verifiedAt?: string;
   cancelledAt?: string;
+  // New project detail fields
+  websiteType?: string;
+  budget?: string;
+  hasDomain?: 'Yes' | 'No';
+  hasHosting?: 'Yes' | 'No';
+  projectDetails?: string;
 };
 
 export type Submission = {

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createTicket, deleteTicket, manuallyVerifyTicket, manuallyCancelTicket } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info } from 'lucide-react';
+import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +34,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 
 function getStatusBadge(status: Ticket['status']) {
@@ -130,113 +131,64 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                 </CardHeader>
                 <CardContent>
                     {sortedTickets.length > 0 ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Ticket ID</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Client</TableHead>
-                                    <TableHead>Details</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {sortedTickets.map((ticket) => (
-                                    <TableRow key={ticket.id}>
-                                        <TableCell className="font-mono">
-                                            {ticket.id}
-                                            <Button variant="ghost" size="icon" className="ml-2 h-7 w-7" onClick={() => copyToClipboard(`${window.location.origin}/ticket/${ticket.id}`)}>
-                                                <Copy className="h-4 w-4" />
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell>{getStatusBadge(ticket.status)}</TableCell>
-                                        <TableCell>
-                                            {ticket.clientName ? (
-                                                <div className="flex flex-col">
-                                                    <span className="font-semibold">{ticket.clientName}</span>
-                                                    <span className="text-xs text-muted-foreground">{ticket.clientEmail}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-muted-foreground">N/A</span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                             <div className="flex flex-col text-xs text-muted-foreground">
-                                                <span>Created: {new Date(ticket.createdAt).toLocaleString()}</span>
-                                                {ticket.verifiedAt && <span>Verified: {new Date(ticket.verifiedAt).toLocaleString()}</span>}
-                                                {ticket.cancelledAt && <span>Cancelled: {new Date(ticket.cancelledAt).toLocaleString()}</span>}
-                                                {ticket.cancellationReason && (
-                                                    <TooltipProvider>
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <span className="flex items-center text-amber-600 cursor-pointer"><Info className="mr-1 h-3 w-3" />Reason</span>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>
-                                                                <p>{ticket.cancellationReason}</p>
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                )}
+                        <div className="space-y-2">
+                        {sortedTickets.map((ticket) => (
+                            <Collapsible key={ticket.id} className="border p-4 rounded-lg">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+                                        <span className="font-mono text-sm">{ticket.id}</span>
+                                        {getStatusBadge(ticket.status)}
+                                        {ticket.clientName && (
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold">{ticket.clientName}</span>
+                                                <span className="text-xs text-muted-foreground">{ticket.clientEmail}</span>
                                             </div>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                             <TooltipProvider>
-                                                <div className="flex gap-1 justify-end">
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <AlertDialog>
-                                                                <AlertDialogTrigger asChild>
-                                                                    <Button variant="ghost" size="icon" disabled={isActing === ticket.id || ticket.status === 'Verified'}>
-                                                                        <CheckCircle className="text-green-600" />
-                                                                    </Button>
-                                                                </AlertDialogTrigger>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader><AlertDialogTitle>Manually verify ticket?</AlertDialogTitle><AlertDialogDescription>This will mark the ticket as verified without client input.</AlertDialogDescription></AlertDialogHeader>
-                                                                    <AlertDialogFooter><AlertDialogCancel>Back</AlertDialogCancel><AlertDialogAction onClick={() => handleAction('verify', ticket.id)}>Verify</AlertDialogAction></AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialog>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent><p>Manually Verify</p></TooltipContent>
-                                                    </Tooltip>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <AlertDialog>
-                                                                <AlertDialogTrigger asChild>
-                                                                     <Button variant="ghost" size="icon" disabled={isActing === ticket.id || ticket.status === 'Cancelled'}>
-                                                                        <Ban className="text-amber-600" />
-                                                                    </Button>
-                                                                </AlertDialogTrigger>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader><AlertDialogTitle>Manually cancel ticket?</AlertDialogTitle><AlertDialogDescription>This will mark the ticket as cancelled.</AlertDialogDescription></AlertDialogHeader>
-                                                                    <AlertDialogFooter><AlertDialogCancel>Back</AlertDialogCancel><AlertDialogAction onClick={() => handleAction('cancel', ticket.id)}>Cancel</AlertDialogAction></AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialog>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent><p>Manually Cancel</p></TooltipContent>
-                                                    </Tooltip>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                             <AlertDialog>
-                                                                <AlertDialogTrigger asChild>
-                                                                     <Button variant="ghost" size="icon" disabled={isActing === ticket.id}>
-                                                                        {isActing === ticket.id ? <Loader2 className="animate-spin" /> : <Trash2 className="text-destructive" />}
-                                                                    </Button>
-                                                                </AlertDialogTrigger>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader><AlertDialogTitle>Permanently delete ticket?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone. The ticket and its link will be gone forever.</AlertDialogDescription></AlertDialogHeader>
-                                                                    <AlertDialogFooter><AlertDialogCancel>Back</AlertDialogCancel><AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => handleAction('delete', ticket.id)}>Delete</AlertDialogAction></AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialog>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent><p>Delete Ticket</p></TooltipContent>
-                                                    </Tooltip>
-                                                </div>
-                                             </TooltipProvider>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        {ticket.status === 'Verified' && <CollapsibleTrigger asChild><Button variant="ghost" size="sm">Details</Button></CollapsibleTrigger>}
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(`${window.location.origin}/ticket/${ticket.id}`)}>
+                                                        <Copy className="h-4 w-4" />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent><p>Copy Link</p></TooltipContent>
+                                            </Tooltip>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="destructive" size="icon" className="h-8 w-8" disabled={isActing === ticket.id}>
+                                                    {isActing === ticket.id ? <Loader2 className="animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader><AlertDialogTitle>Permanently delete ticket?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                                                    <AlertDialogFooter><AlertDialogCancel>Back</AlertDialogCancel><AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => handleAction('delete', ticket.id)}>Delete</AlertDialogAction></AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+                                <CollapsibleContent className="space-y-4 pt-4 mt-4 border-t">
+                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                        <div className="flex items-center gap-2"><Briefcase className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Type</p><p>{ticket.websiteType}</p></div></div>
+                                        <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Budget</p><p>{ticket.budget} PKR</p></div></div>
+                                        <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Domain</p><p>{ticket.hasDomain}</p></div></div>
+                                        <div className="flex items-center gap-2"><Server className="w-4 h-4 text-muted-foreground" /><div><p className="font-semibold">Hosting</p><p>{ticket.hasHosting}</p></div></div>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold mb-1">Project Details</p>
+                                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{ticket.projectDetails}</p>
+                                    </div>
+                                     <div>
+                                        <p className="font-semibold mb-1">Contact</p>
+                                        <p className="text-sm text-muted-foreground">{ticket.clientPhone}</p>
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        ))}
+                        </div>
                     ) : (
                         <div className="text-center py-12 text-muted-foreground">
                             <p>Click "Create New Ticket" to generate a unique link for a client.</p>
