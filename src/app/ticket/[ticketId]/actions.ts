@@ -8,6 +8,8 @@ import { revalidatePath } from 'next/cache';
 import type { Ticket } from '@/lib/data';
 import { sendEmail } from '@/lib/email';
 
+const ADMIN_EMAIL = 'abdullahchohan5pansy@gmail.com';
+
 const verificationSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -23,6 +25,22 @@ function formatDetailsForEmail(data: z.infer<typeof verificationSchema>) {
     return `
         <p>Your project details have been recorded as follows:</p>
         <ul style="list-style-type: none; padding: 0; line-height: 1.8;">
+            <li><strong>Website Type:</strong> ${data.websiteType}</li>
+            <li><strong>Budget:</strong> ${data.budget} PKR</li>
+            <li><strong>Has Domain:</strong> ${data.hasDomain}</li>
+            <li><strong>Has Hosting:</strong> ${data.hasHosting}</li>
+            <li><strong>Project Details:</strong><br/>${data.projectDetails.replace(/\n/g, '<br/>')}</li>
+        </ul>
+    `;
+}
+
+function formatAdminNotificationDetails(data: z.infer<typeof verificationSchema>) {
+     return `
+        <p>A client has submitted their project details:</p>
+        <ul style="list-style-type: none; padding: 0; line-height: 1.8; border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+            <li><strong>Client Name:</strong> ${data.name}</li>
+            <li><strong>Client Email:</strong> ${data.email}</li>
+            <li><strong>Client Phone:</strong> ${data.phone}</li>
             <li><strong>Website Type:</strong> ${data.websiteType}</li>
             <li><strong>Budget:</strong> ${data.budget} PKR</li>
             <li><strong>Has Domain:</strong> ${data.hasDomain}</li>
@@ -64,12 +82,20 @@ export async function verifyTicket(ticketId: string, data: unknown) {
 
     await update(ticketRef, updates);
 
-    // Send confirmation email
+    // Send confirmation email to client
     await sendEmail({
       to: email,
       subject: `Your Project Details are Submitted: Ticket ${ticketId}`,
       text: `Hello ${name},\n\nThis is a confirmation that your ticket with ID ${ticketId} has been successfully verified and your project details have been submitted.\n\n${formatDetailsForEmail(parsed.data).replace(/<[^>]*>/g, '')}\nThank you,\nChohan Space`,
       html: `<p>Hello ${name},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been successfully verified and your project details have been submitted.</p>${formatDetailsForEmail(parsed.data)}<p>Thank you,<br/>Chohan Space</p>`,
+    });
+
+    // Send notification email to admin
+    await sendEmail({
+        to: ADMIN_EMAIL,
+        subject: `Ticket Verified: ${ticketId}`,
+        text: `Ticket ${ticketId} has been verified by ${name} (${email}).`,
+        html: `<h2>Ticket Verified: ${ticketId}</h2>${formatAdminNotificationDetails(parsed.data)}`,
     });
 
     revalidatePath(`/ticket/${ticketId}`);
@@ -83,7 +109,7 @@ export async function verifyTicket(ticketId: string, data: unknown) {
 
 const cancellationSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
-    email: z.string().email().optional(),
+    email: z.string().email('Please provide your email.').optional(),
 });
 
 export async function cancelTicket(ticketId: string, data: unknown) {
@@ -109,6 +135,10 @@ export async function cancelTicket(ticketId: string, data: unknown) {
             return { success: false, message: 'This ticket has already been cancelled.' };
         }
         
+        if (ticketData.status === 'Completed') {
+            return { success: false, message: 'This ticket has been completed and cannot be cancelled.' };
+        }
+
         // If ticket is verified, we must match the email
         if (ticketData.status === 'Verified') {
             if (!email) {
@@ -127,6 +157,14 @@ export async function cancelTicket(ticketId: string, data: unknown) {
 
         await update(ticketRef, updates);
         
+        // Send notification email to admin
+        await sendEmail({
+            to: ADMIN_EMAIL,
+            subject: `Ticket Cancelled by Client: ${ticketId}`,
+            text: `Ticket ${ticketId} was cancelled by the client. Reason: ${reason}`,
+            html: `<p>Ticket <strong>${ticketId}</strong> was cancelled by the client.</p><p><b>Client:</b> ${ticketData.clientName || email}</p><p><b>Reason:</b> ${reason}</p>`,
+        });
+
         const emailToSendTo = ticketData.clientEmail || email;
         if (emailToSendTo) {
              await sendEmail({

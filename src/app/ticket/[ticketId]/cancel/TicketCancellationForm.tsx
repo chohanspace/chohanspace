@@ -14,6 +14,8 @@ import { cancelTicket } from '../actions';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import type { Ticket } from '@/lib/data';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 const formSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
@@ -56,15 +58,24 @@ export function TicketCancellationForm({ ticketId, status }: { ticketId: string;
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {status === 'Verified' && (
-                     <FormField control={form.control} name="email" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Confirm Your Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Enter the email used to verify" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} />
+                    <>
+                        <Alert>
+                            <Info className="h-4 w-4" />
+                            <AlertTitle>Identity Confirmation</AlertTitle>
+                            <AlertDescription>
+                                To cancel a verified project, please enter the email address you used during verification.
+                            </AlertDescription>
+                        </Alert>
+                         <FormField control={form.control} name="email" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Your Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" placeholder="Enter the email used to verify" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    </>
                 )}
                 <FormField control={form.control} name="reason" render={({ field }) => (
                     <FormItem>
@@ -76,7 +87,7 @@ export function TicketCancellationForm({ ticketId, status }: { ticketId: string;
                     </FormItem>
                 )} />
                 <Button type="submit" variant="destructive" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</> : 'Cancel Ticket'}
+                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</> : 'Confirm Cancellation'}
                 </Button>
             </form>
         </Form>

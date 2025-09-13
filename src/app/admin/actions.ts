@@ -8,6 +8,8 @@ import { z } from 'zod';
 import type { BlogPost, Ticket } from '@/lib/data';
 import { sendEmail } from '@/lib/email';
 
+const ADMIN_EMAIL = 'abdullahchohan5pansy@gmail.com';
+
 export async function deleteSubmission(submissionId: string) {
     if (!submissionId) {
         return { success: false, message: 'Invalid submission ID.' };
@@ -126,6 +128,14 @@ export async function createTicket() {
     try {
         await set(ticketRef, newTicket);
         revalidatePath('/admin');
+        
+        await sendEmail({
+            to: ADMIN_EMAIL,
+            subject: `New Ticket Created: ${ticketId}`,
+            text: `A new ticket has been created with ID: ${ticketId}.`,
+            html: `<p>A new ticket has been created with ID: <strong>${ticketId}</strong>.</p><p>You can view it in the admin dashboard.</p>`,
+        });
+
         return { success: true, message: `Ticket ${ticketId} created successfully.`, ticketId };
     } catch (error) {
         console.error('Error creating ticket:', error);
@@ -199,6 +209,14 @@ export async function manuallyCancelTicket(ticketId: string) {
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
         revalidatePath(`/ticket/${ticketId}/cancel`);
+        
+        await sendEmail({
+            to: ADMIN_EMAIL,
+            subject: `Ticket Cancelled by Admin: ${ticketId}`,
+            text: `Ticket ${ticketId} was manually cancelled by an admin.`,
+            html: `<p>Ticket <strong>${ticketId}</strong> was manually cancelled by an admin.</p>`,
+        });
+
         return { success: true, message: 'Ticket manually cancelled.' };
     } catch (error) {
         console.error('Failed to manually cancel ticket:', error);
@@ -226,6 +244,14 @@ export async function markTicketAsCompleted(ticketId: string) {
         await update(ticketRef, updates);
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
+
+        await sendEmail({
+            to: ADMIN_EMAIL,
+            subject: `Ticket Marked as Completed: ${ticketId}`,
+            text: `Ticket ${ticketId} has been marked as completed.`,
+            html: `<p>Ticket <strong>${ticketId}</strong> has been marked as completed by an admin. You can now send the delivery email.</p>`,
+        });
+
         return { success: true, message: 'Ticket marked as completed.' };
     } catch (error) {
         console.error('Failed to mark ticket as completed:', error);
