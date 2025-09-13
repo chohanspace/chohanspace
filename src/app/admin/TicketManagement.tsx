@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createTicket, deleteTicket, manuallyVerifyTicket, manuallyCancelTicket, markTicketAsCompleted } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server, CheckCheck } from 'lucide-react';
+import { Loader2, PlusCircle, Copy, Trash2, CheckCircle, XCircle, Ban, AlertTriangle, Info, Briefcase, DollarSign, Globe, Server, CheckCheck, Link2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import Link from 'next/link';
 
 
 function getStatusBadge(status: Ticket['status']) {
@@ -170,7 +171,17 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                                         <Copy className="h-4 w-4" />
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent><p>Copy Link</p></TooltipContent>
+                                                <TooltipContent><p>Copy Verification Link</p></TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                                                        <Link href={`/ticket/${ticket.id}/cancel`} target="_blank">
+                                                           <Link2 className="h-4 w-4" />
+                                                        </Link>
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent><p>Open Client Cancellation Link</p></TooltipContent>
                                             </Tooltip>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
