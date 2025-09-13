@@ -142,9 +142,9 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        {(ticket.status === 'Verified' || ticket.status === 'Completed') && <CollapsibleTrigger asChild><Button variant="ghost" size="sm">Details</Button></CollapsibleTrigger>}
-                                        {ticket.status === 'Verified' && (
-                                            <TooltipProvider>
+                                        <TooltipProvider>
+                                            {(ticket.status === 'Verified' || ticket.status === 'Completed') && <CollapsibleTrigger asChild><Button variant="ghost" size="sm">Details</Button></CollapsibleTrigger>}
+                                            {ticket.status === 'Verified' && (
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
                                                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleAction('complete', ticket.id)} disabled={isActing === ticket.id}>
@@ -153,9 +153,17 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
                                                     </TooltipTrigger>
                                                     <TooltipContent><p>Mark as Completed</p></TooltipContent>
                                                 </Tooltip>
-                                            </TooltipProvider>
-                                        )}
-                                        <TooltipProvider>
+                                            )}
+                                             {(ticket.status === 'Pending' || ticket.status === 'Verified') && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleAction('cancel', ticket.id)} disabled={isActing === ticket.id}>
+                                                            {isActing === ticket.id ? <Loader2 className="animate-spin" /> : <Ban className="h-4 w-4" />}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent><p>Manually Cancel</p></TooltipContent>
+                                                </Tooltip>
+                                            )}
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(`${window.location.origin}/ticket/${ticket.id}`)}>

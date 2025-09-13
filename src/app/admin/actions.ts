@@ -177,6 +177,17 @@ export async function manuallyCancelTicket(ticketId: string) {
     if (!database) return { success: false, message: 'Database not configured.' };
 
     const ticketRef = ref(database, `tickets/${ticketId}`);
+    
+    const snapshot = await get(ticketRef);
+    if (!snapshot.exists()) {
+        return { success: false, message: 'Ticket not found.' };
+    }
+    const ticketData = snapshot.val() as Ticket;
+
+    if (ticketData.status === 'Cancelled' || ticketData.status === 'Completed') {
+        return { success: false, message: `Ticket is already ${ticketData.status.toLowerCase()} and cannot be cancelled.`};
+    }
+
     const updates = {
         status: 'Cancelled',
         cancelledAt: new Date().toISOString(),
@@ -186,6 +197,8 @@ export async function manuallyCancelTicket(ticketId: string) {
     try {
         await update(ticketRef, updates);
         revalidatePath('/admin');
+        revalidatePath(`/ticket/${ticketId}`);
+        revalidatePath(`/ticket/${ticketId}/cancel`);
         return { success: true, message: 'Ticket manually cancelled.' };
     } catch (error) {
         console.error('Failed to manually cancel ticket:', error);
