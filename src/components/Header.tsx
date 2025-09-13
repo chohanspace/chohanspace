@@ -48,8 +48,8 @@ export function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setSheetOpen] = useState(false);
 
-  // Hide header on the login page for a cleaner look
-  if (pathname === '/login') {
+  // Hide header on the admin page for a cleaner look
+  if (pathname.startsWith('/admin')) {
     return null;
   }
 

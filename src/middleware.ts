@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import * as jose from 'jose';
@@ -16,37 +17,29 @@ async function verifyToken(token: string, secret: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  if (pathname.startsWith('/admin')) {
+  
+  // The /admin page now handles its own authentication check.
+  // This middleware is kept to protect potential future nested admin routes
+  // (e.g. /admin/settings) if they are ever created.
+  if (pathname.startsWith('/admin/')) {
     const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
     const jwtSecret = process.env.JWT_SECRET;
 
     if (!jwtSecret) {
       console.error('JWT_SECRET is not set');
-      // Redirect to login as a safe default
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
 
     if (!token || !(await verifyToken(token, jwtSecret))) {
-      // If no token or token is invalid, redirect to the login page
-      return NextResponse.redirect(new URL('/login', request.url));
+      // If no token or token is invalid, redirect to the main admin page
+      // which will show the login form.
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
   }
-
-  if (pathname === '/login') {
-     const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
-     const jwtSecret = process.env.JWT_SECRET;
-     if (token && jwtSecret && (await verifyToken(token, jwtSecret))) {
-        // If user is on login page but already has a valid token, redirect to admin
-        return NextResponse.redirect(new URL('/admin', request.url));
-     }
-  }
-
-
+  
   return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: ['/admin/:path*'],
 };

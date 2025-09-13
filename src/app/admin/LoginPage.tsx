@@ -28,9 +28,9 @@ export default function AdminLoginPage() {
             });
 
             if (res.ok) {
-                // The API route handles the cookie, and the middleware will handle the redirect.
-                // We just need to refresh the router to trigger the middleware check.
-                router.push('/admin');
+                // The API route handles the cookie.
+                // We just need to refresh the page to show the dashboard.
+                router.refresh();
             } else {
                 toast({
                     title: 'Login Failed',
@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[calc(100vh-200px)] animate-fadeIn">
+        <div className="flex items-center justify-center min-h-screen bg-background animate-fadeIn">
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">

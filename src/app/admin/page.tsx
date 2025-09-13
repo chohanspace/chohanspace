@@ -1,8 +1,21 @@
 
+import { cookies } from 'next/headers';
+import * as jose from 'jose';
 import { database } from '@/lib/firebase';
 import { ref, get, query } from 'firebase/database';
 import type { BlogPost, Ticket, Submission } from '@/lib/data';
 import AdminDashboard from './Dashboard';
+import AdminLoginPage from './LoginPage';
+
+async function verifyToken(token: string, secret: string) {
+  try {
+    const secretKey = new TextEncoder().encode(secret);
+    await jose.jwtVerify(token, secretKey);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 async function getDashboardData() {
     if (!database) {
@@ -43,18 +56,28 @@ async function getDashboardData() {
                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         }
 
-        return { submissions, posts, tickets };
+        return { submissions, posts, tickets, error: null };
 
     } catch (error) {
         console.error("Error fetching dashboard data on server:", error);
-        // Return empty arrays on error so the page can still render.
-        // The client component can show a more specific error message.
         return { submissions: [], posts: [], tickets: [], error: 'Failed to fetch dashboard data.' };
     }
 }
 
 
 export default async function AdminPage() {
+    const token = cookies().get('auth_token')?.value;
+    const jwtSecret = process.env.JWT_SECRET;
+    let isAuthenticated = false;
+
+    if (token && jwtSecret) {
+        isAuthenticated = await verifyToken(token, jwtSecret);
+    }
+    
+    if (!isAuthenticated) {
+        return <AdminLoginPage />;
+    }
+    
     const { submissions, posts, tickets, error } = await getDashboardData();
 
     return (
@@ -62,7 +85,7 @@ export default async function AdminPage() {
         initialSubmissions={submissions}
         initialPosts={posts}
         initialTickets={tickets}
-        serverError={error}
+        serverError={error || undefined}
        />
     );
 }
