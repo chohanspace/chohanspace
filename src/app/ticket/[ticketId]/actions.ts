@@ -13,6 +13,7 @@ const ADMIN_EMAIL = 'abdullahchohan5pansy@gmail.com';
 const verificationSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
+  countryCode: z.string(),
   phone: z.string().min(5),
   websiteType: z.string().min(1),
   budget: z.string().min(2),
@@ -22,9 +23,11 @@ const verificationSchema = z.object({
 });
 
 function formatDetailsForEmail(data: z.infer<typeof verificationSchema>) {
+    const fullPhone = `${data.countryCode}${data.phone}`;
     return `
         <p>Your project details have been recorded as follows:</p>
         <ul style="list-style-type: none; padding: 0; line-height: 1.8;">
+            <li><strong>Phone:</strong> ${fullPhone}</li>
             <li><strong>Website Type:</strong> ${data.websiteType}</li>
             <li><strong>Budget:</strong> ${data.budget} PKR</li>
             <li><strong>Has Domain:</strong> ${data.hasDomain}</li>
@@ -35,12 +38,13 @@ function formatDetailsForEmail(data: z.infer<typeof verificationSchema>) {
 }
 
 function formatAdminNotificationDetails(data: z.infer<typeof verificationSchema>) {
+    const fullPhone = `${data.countryCode}${data.phone}`;
      return `
         <p>A client has submitted their project details:</p>
         <ul style="list-style-type: none; padding: 0; line-height: 1.8; border: 1px solid #eee; padding: 15px; border-radius: 8px;">
             <li><strong>Client Name:</strong> ${data.name}</li>
             <li><strong>Client Email:</strong> ${data.email}</li>
-            <li><strong>Client Phone:</strong> ${data.phone}</li>
+            <li><strong>Client Phone:</strong> ${fullPhone}</li>
             <li><strong>Website Type:</strong> ${data.websiteType}</li>
             <li><strong>Budget:</strong> ${data.budget} PKR</li>
             <li><strong>Has Domain:</strong> ${data.hasDomain}</li>
@@ -58,8 +62,9 @@ export async function verifyTicket(ticketId: string, data: unknown) {
     return { success: false, message: 'Invalid form data. Please fill out all fields correctly.' };
   }
   
-  const { name, email, phone, websiteType, budget, hasDomain, hasHosting, projectDetails } = parsed.data;
+  const { name, email, phone, countryCode, websiteType, budget, hasDomain, hasHosting, projectDetails } = parsed.data;
   const ticketRef = ref(database, `tickets/${ticketId}`);
+  const fullPhoneNumber = `${countryCode}${phone.replace(/\D/g, '')}`;
 
   try {
     const snapshot = await get(ticketRef);
@@ -71,7 +76,7 @@ export async function verifyTicket(ticketId: string, data: unknown) {
       status: 'Verified',
       clientName: name,
       clientEmail: email,
-      clientPhone: phone,
+      clientPhone: fullPhoneNumber,
       verifiedAt: new Date().toISOString(),
       websiteType,
       budget,
@@ -146,8 +151,8 @@ export async function cancelTicket(ticketId: string, data: unknown) {
             }
             const normalizedIdentity = identity.trim().toLowerCase();
             const normalizedEmail = ticketData.clientEmail?.trim().toLowerCase();
-            const normalizedPhone = ticketData.clientPhone?.replace(/\s+/g, ''); // Remove spaces for comparison
-            const normalizedInputPhone = identity.replace(/\s+/g, '');
+            const normalizedPhone = ticketData.clientPhone?.replace(/\D/g, ''); // Remove non-digit chars
+            const normalizedInputPhone = identity.replace(/\D/g, '');
 
             if (normalizedIdentity !== normalizedEmail && normalizedInputPhone !== normalizedPhone) {
                  return { success: false, message: 'The email or phone number does not match the one on file for this ticket.' };

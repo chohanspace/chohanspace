@@ -15,10 +15,12 @@ import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { countries } from '@/lib/countries';
 
 const formSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters.'),
     email: z.string().email('Please enter a valid email address.'),
+    countryCode: z.string(),
     phone: z.string().min(5, 'Please enter a valid phone number.'),
     websiteType: z.string().min(1, 'Please select a website type.'),
     budget: z.string().min(2, 'Please enter an estimated budget.'),
@@ -38,6 +40,7 @@ export function TicketVerificationForm({ ticketId }: { ticketId: string }) {
         defaultValues: { 
             name: '', 
             email: '', 
+            countryCode: '+92',
             phone: '',
             websiteType: '',
             budget: '',
@@ -76,21 +79,43 @@ export function TicketVerificationForm({ ticketId }: { ticketId: string }) {
                             <FormMessage />
                         </FormItem>
                     )} />
-                     <FormField control={form.control} name="phone" render={({ field }) => (
+                     <FormField control={form.control} name="email" render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl><Input placeholder="(123) 456-7890" {...field} /></FormControl>
+                            <FormLabel>Email Address</FormLabel>
+                            <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
                             <FormMessage />
                         </FormItem>
                     )} />
                 </div>
-                 <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email Address</FormLabel>
-                        <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )} />
+                 <div className="grid grid-cols-[80px_1fr] gap-2">
+                     <FormField
+                        control={form.control}
+                        name="countryCode"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Code</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger><SelectValue/></SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {countries.map(country => (
+                                            <SelectItem key={country.code} value={country.dial_code}>{country.dial_code} ({country.code})</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField control={form.control} name="phone" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl><Input placeholder="3399663310" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
