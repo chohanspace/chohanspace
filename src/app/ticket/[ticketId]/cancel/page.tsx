@@ -5,7 +5,7 @@ import type { Ticket } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TicketCancellationForm } from './TicketCancellationForm';
-import { CheckCircle, XCircle, Ban, Clock } from 'lucide-react';
+import { XCircle, Ban } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -35,6 +35,7 @@ export default async function TicketCancelPage({ params }: TicketCancelPageProps
 
     switch (ticket.status) {
         case 'Pending':
+        case 'Verified':
             statusContent = (
                 <>
                     <CardHeader>
@@ -42,23 +43,12 @@ export default async function TicketCancelPage({ params }: TicketCancelPageProps
                             <Ban size={32} />
                         </div>
                         <CardTitle className="text-center">Cancel Ticket</CardTitle>
-                        <CardDescription className="text-center">Please provide a reason for cancelling ticket <span className="font-mono">{ticket.id}</span>.</CardDescription>
+                        <CardDescription className="text-center">Please provide the details below to cancel ticket <span className="font-mono">{ticket.id}</span>.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <TicketCancellationForm ticketId={ticket.id} />
+                        <TicketCancellationForm ticketId={ticket.id} status={ticket.status} />
                     </CardContent>
                 </>
-            );
-            break;
-        case 'Verified':
-             statusContent = (
-                 <CardContent className="text-center py-10">
-                    <div className="mx-auto bg-green-100 text-green-700 rounded-full h-20 w-20 flex items-center justify-center mb-6">
-                        <CheckCircle size={40} />
-                    </div>
-                    <h2 className="text-2xl font-bold mb-2">Ticket Already Verified</h2>
-                    <p className="text-muted-foreground">This ticket (<span className="font-mono">{ticket.id}</span>) has already been verified and cannot be cancelled.</p>
-                 </CardContent>
             );
             break;
         case 'Cancelled':
@@ -94,4 +84,3 @@ export default async function TicketCancelPage({ params }: TicketCancelPageProps
 
 // Disable static generation for ticket pages as they are dynamic
 export const dynamic = 'force-dynamic';
-

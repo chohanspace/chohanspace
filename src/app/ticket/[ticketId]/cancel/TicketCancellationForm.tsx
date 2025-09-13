@@ -12,20 +12,24 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cancelTicket } from '../actions';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
+import type { Ticket } from '@/lib/data';
 
 const formSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
+    email: z.string().email('Please enter a valid email.').optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function TicketCancellationForm({ ticketId }: { ticketId: string }) {
+export function TicketCancellationForm({ ticketId, status }: { ticketId: string; status: Ticket['status'] }) {
     const { toast } = useToast();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: { reason: '' },
+        defaultValues: { reason: '', email: '' },
     });
 
     async function onSubmit(values: FormValues) {
@@ -51,6 +55,17 @@ export function TicketCancellationForm({ ticketId }: { ticketId: string }) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {status === 'Verified' && (
+                     <FormField control={form.control} name="email" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Confirm Your Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Enter the email used to verify" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                )}
                 <FormField control={form.control} name="reason" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Reason for Cancellation</FormLabel>
@@ -67,4 +82,3 @@ export function TicketCancellationForm({ ticketId }: { ticketId: string }) {
         </Form>
     );
 }
-

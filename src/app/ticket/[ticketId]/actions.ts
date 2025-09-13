@@ -83,6 +83,7 @@ export async function verifyTicket(ticketId: string, data: unknown) {
 
 const cancellationSchema = z.object({
     reason: z.string().min(10, 'Please provide a reason of at least 10 characters.'),
+    email: z.string().email().optional(),
 });
 
 export async function cancelTicket(ticketId: string, data: unknown) {
@@ -93,16 +94,30 @@ export async function cancelTicket(ticketId: string, data: unknown) {
         return { success: false, message: 'Invalid form data. Please provide a valid reason.' };
     }
 
-    const { reason } = parsed.data;
+    const { reason, email } = parsed.data;
     const ticketRef = ref(database, `tickets/${ticketId}`);
 
     try {
         const snapshot = await get(ticketRef);
-        if (!snapshot.exists() || (snapshot.val() as Ticket).status !== 'Pending') {
-            return { success: false, message: 'This ticket is invalid or has already been processed.' };
+        if (!snapshot.exists()) {
+             return { success: false, message: 'This ticket does not exist.' };
         }
         
         const ticketData = snapshot.val() as Ticket;
+
+        if (ticketData.status === 'Cancelled') {
+            return { success: false, message: 'This ticket has already been cancelled.' };
+        }
+        
+        // If ticket is verified, we must match the email
+        if (ticketData.status === 'Verified') {
+            if (!email) {
+                return { success: false, message: 'Email confirmation is required to cancel a verified ticket.' };
+            }
+            if (ticketData.clientEmail?.toLowerCase() !== email.toLowerCase()) {
+                return { success: false, message: 'The email address does not match the one on file for this ticket.' };
+            }
+        }
 
         const updates = {
             status: 'Cancelled',
@@ -112,13 +127,13 @@ export async function cancelTicket(ticketId: string, data: unknown) {
 
         await update(ticketRef, updates);
         
-        // Send cancellation email if the user had already provided an email
-        if (ticketData.clientEmail) {
+        const emailToSendTo = ticketData.clientEmail || email;
+        if (emailToSendTo) {
              await sendEmail({
-                to: ticketData.clientEmail,
+                to: emailToSendTo,
                 subject: `Your Ticket has been Cancelled: ${ticketId}`,
-                text: `Hello ${ticketData.clientName || 'Client'},\n\nThis is a confirmation that your ticket with ID ${ticketId} has been cancelled.\n\nReason: ${reason}\n\nThank you,\nChohan Space`,
-                html: `<p>Hello ${ticketData.clientName || 'Client'},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been cancelled.</p><p><b>Reason:</b> ${reason}</p><p>Thank you,<br/>Chohan Space</p>`,
+                text: `Hello ${ticketData.clientName || 'Client'},\n\nThis is a confirmation that your ticket with ID ${ticketId} has been cancelled.\n\nReason: ${reason}\n\nIf you did not request this, please contact us immediately.\n\nThank you,\nChohan Space`,
+                html: `<p>Hello ${ticketData.clientName || 'Client'},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been cancelled.</p><p><b>Reason:</b> ${reason}</p><p>If you did not request this, please contact us immediately.</p><p>Thank you,<br/>Chohan Space</p>`,
             });
         }
 

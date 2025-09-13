@@ -98,7 +98,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
                 <Card>
                     {statusContent}
                 </Card>
-                 {ticket.status === 'Pending' && (
+                 {(ticket.status === 'Pending' || ticket.status === 'Verified') && (
                     <div className="text-center mt-4">
                         <Button variant="link" asChild>
                            <Link href={`/ticket/${ticket.id}/cancel`}>Need to cancel this request?</Link>
