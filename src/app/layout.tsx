@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { CursorTrail } from '@/components/CursorTrail';
+import { Chatbot } from '@/components/Chatbot';
 
 export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
@@ -44,6 +45,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
+            <Chatbot />
             <Toaster />
         </ThemeProvider>
       </body>

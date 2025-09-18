@@ -1,3 +1,4 @@
+import { z } from 'zod';
 
 export type BlogPost = {
   slug: string;
@@ -47,3 +48,9 @@ export type Project = {
   link?: string; // Optional external link
   status?: 'Live' | 'Coming Soon';
 };
+
+export const ChatMessageSchema = z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+});
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
