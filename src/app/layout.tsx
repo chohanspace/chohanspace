@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
   description: 'Chohan Space crafts intelligent, high-performance websites and applications that drive results.',
   openGraph: {
-    images: ['https://i.ibb.co/ynNJ6VP4/file-00000000f4c061f8a5a162e245bae10b.png'],
+    images: ['https://i.ibb.co/7rmg0z8/file.png'],
   },
 };
 
