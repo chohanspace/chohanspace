@@ -35,3 +35,12 @@ export type Submission = {
     message: string;
     id: string;
 };
+
+export type Project = {
+  slug: string;
+  title: string;
+  description: string;
+  image: string;
+  dataAiHint: string;
+  tags: string[];
+};

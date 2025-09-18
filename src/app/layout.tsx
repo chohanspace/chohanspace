@@ -7,15 +7,13 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
-import { Chatbot } from '@/components/Chatbot';
-import { CollaborationBanner } from '@/components/CollaborationBanner';
 import { CursorTrail } from '@/components/CursorTrail';
 
 export const metadata: Metadata = {
   title: 'Chohan Space | Web Development Agency',
   description: 'Chohan Space crafts intelligent, high-performance websites and applications that drive results.',
   openGraph: {
-    images: ['https://i.ibb.co/7rmg0z8/file.png'],
+    images: ['https://drive.google.com/file/d/1gsl_a4HVu1fuJ1JYZJpK1xJqZJIaYeHc/view?usp=drivesdk'],
   },
 };
 
@@ -41,10 +39,8 @@ export default function RootLayout({
             <CursorTrail />
             <ScrollProgress />
             <Header />
-            <CollaborationBanner />
             <main className="flex-grow">{children}</main>
             <Footer />
-            <Chatbot />
             <Toaster />
         </ThemeProvider>
       </body>

@@ -8,7 +8,6 @@ export function Footer() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-8 text-center sm:flex-row">
         <div className="text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Chohan Space. All rights reserved.</p>
-          <p>In collaboration with <a href="https://buttnetworks.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground hover:underline">Butt Networks</a>.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
