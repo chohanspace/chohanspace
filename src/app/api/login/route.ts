@@ -20,7 +20,8 @@ export async function POST(req: NextRequest) {
     
     const emailOptions = [
         'abdullahchohan6900@gmail.com',
-        'abdullahchohan5pansy@gmail.com'
+        'abdullahchohan5pansy@gmail.com',
+        'abdullah@chohanestate.com'
     ];
 
     return NextResponse.json({ 

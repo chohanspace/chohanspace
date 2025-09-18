@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Whitelist emails
-    const allowedEmails = ['abdullahchohan6900@gmail.com', 'abdullahchohan5pansy@gmail.com'];
+    const allowedEmails = ['abdullahchohan6900@gmail.com', 'abdullahchohan5pansy@gmail.com', 'abdullah@chohanestate.com'];
     if (!allowedEmails.includes(email)) {
         return new NextResponse('Invalid email address.', { status: 400 });
     }
