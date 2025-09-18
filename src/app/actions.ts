@@ -7,11 +7,12 @@ import { ChatMessageSchema } from '@/lib/data';
 import type { ChatMessage } from '@/lib/data';
 
 const chatTranscriptSchema = z.object({
+  userEmail: z.string().email().optional(),
   transcript: z.array(ChatMessageSchema),
   createdAt: z.string().datetime(),
 });
 
-export async function saveChatTranscript(messages: ChatMessage[]) {
+export async function saveChatTranscript(messages: ChatMessage[], email?: string) {
     if (!database) {
         console.error('Database not configured. Cannot save chat transcript.');
         return { success: false, message: 'Database not configured.' };
@@ -22,6 +23,7 @@ export async function saveChatTranscript(messages: ChatMessage[]) {
     }
 
     const transcriptData = {
+        userEmail: email,
         transcript: messages,
         createdAt: new Date().toISOString(),
     };
