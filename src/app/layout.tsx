@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   openGraph: {
     images: ['https://i.ibb.co/q3ktqWX1/Purple-Black-Modern-Marketing-Plan-Presentation-20250918-160326-0000.png'],
   },
+  icons: {
+    icon: 'https://i.ibb.co/KQ6m5Mb/file-00000000f6a861f4a4b603469532cc43.png',
+  },
 };
 
 export default function RootLayout({
