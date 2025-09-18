@@ -48,6 +48,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background py-16">
         <div className="animation-container">
+            <div className="gradient-circle gradient-circle-top-left"></div>
+            <div className="gradient-circle gradient-circle-bottom-right"></div>
             <Laptop className="anim-element anim-laptop" strokeWidth={0.5} />
             <Monitor className="anim-element anim-monitor" strokeWidth={0.5} />
             {codeSnippets.map(snippet => (
