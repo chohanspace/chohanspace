@@ -57,7 +57,7 @@ export default function Home() {
 
           <div className="my-8">
             <Image 
-              src="https://i.ibb.co/VvWjQ6Q/chohan-space-banner.png" 
+              src="https://i.ibb.co/q3ktqWX1/Purple-Black-Modern-Marketing-Plan-Presentation-20250918-160326-0000.png" 
               alt="Chohan Space Banner"
               width={1200}
               height={630}
