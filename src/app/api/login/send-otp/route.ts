@@ -36,9 +36,14 @@ export async function POST(req: NextRequest) {
     const otp = generateOtp();
     const otpToken = jwt.sign({ otp, email, otpVerified: false }, jwtSecret, { expiresIn: '5m' });
 
+    // Determine the actual recipient address
+    const recipientEmail = email === 'abdullah@chohanestate.com' 
+        ? 'abdullahchohan5pansy@gmail.com' 
+        : email;
+
     try {
         await sendEmail({
-            to: email,
+            to: recipientEmail,
             subject: 'Your Admin Login OTP',
             text: `Your one-time password is: ${otp}. It will expire in 5 minutes.`,
             html: `<p>Your one-time password is: <strong>${otp}</strong>.</p><p>It will expire in 5 minutes.</p>`,
