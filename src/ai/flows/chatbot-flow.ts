@@ -44,13 +44,9 @@ const chatPrompt = ai.definePrompt({
   system: systemPrompt,
   prompt: `
     {{#each history}}
-      {{#if (eq role 'user')}}
-        User: {{{content}}}
-      {{else}}
-        Assistant: {{{content}}}
-      {{/if}}
+      {{role}}: {{{content}}}
     {{/each}}
-    Assistant:
+    model:
   `,
 });
 
