@@ -54,6 +54,18 @@ export default function Home() {
           <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground mb-8">
             Chohan Space crafts intelligent, high-performance websites and applications that drive results.
           </p>
+
+          <div className="my-8">
+            <Image 
+              src="https://i.ibb.co/VvWjQ6Q/chohan-space-banner.png" 
+              alt="Chohan Space Banner"
+              width={1200}
+              height={630}
+              className="rounded-lg shadow-lg mx-auto"
+              priority
+            />
+          </div>
+
           <Button asChild size="lg">
             <Link href="/work">
               Explore Our Work <ArrowRight className="ml-2" />
