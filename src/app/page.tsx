@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background dark:bg-black py-16">
+      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background py-16">
         <div className="animation-container">
             <Laptop className="anim-element anim-laptop" strokeWidth={0.5} />
             <Monitor className="anim-element anim-monitor" strokeWidth={0.5} />
@@ -91,7 +91,7 @@ export default function Home() {
             <p className="text-3xl md:text-4xl font-bold font-headline mt-2">Introducing: The Personalization Engine</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
-            <div className="relative aspect-video bg-background rounded-lg flex items-center justify-center p-8 shadow-2xl overflow-hidden">
+            <div className="relative aspect-video bg-background rounded-lg flex items-center justify-center p-8 shadow-lg overflow-hidden">
               <BrainCircuit className="h-3/5 w-3/5 text-primary animate-pulse" />
             </div>
             <div className="space-y-4">
@@ -129,7 +129,7 @@ export default function Home() {
                         Coming Soon...
                     </Button>
                 </div>
-                <div className="relative aspect-video bg-secondary rounded-lg flex items-center justify-center p-8 shadow-2xl overflow-hidden">
+                <div className="relative aspect-video bg-secondary rounded-lg flex items-center justify-center p-8 shadow-lg overflow-hidden">
                     <Bot className="h-2/5 w-2/5 text-primary opacity-50" />
                     <Settings className="absolute h-1/4 w-1/4 text-primary animate-spin-slow opacity-80" style={{ animationDuration: '5s' }} />
                 </div>
@@ -147,7 +147,7 @@ export default function Home() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center">
+            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
               <CardHeader>
                 <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                   <Code size={32} />
@@ -158,7 +158,7 @@ export default function Home() {
                 <p className="text-muted-foreground">Crafting robust, scalable, and secure web applications tailored to your needs.</p>
               </CardContent>
             </Card>
-            <Card className="text-center">
+            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
               <CardHeader>
                 <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                   <PenTool size={32} />
@@ -169,7 +169,7 @@ export default function Home() {
                 <p className="text-muted-foreground">Designing intuitive and beautiful user interfaces that captivate your audience.</p>
               </CardContent>
             </Card>
-            <Card className="text-center">
+            <Card className="text-center hover:shadow-lg hover:-translatey-1 transition-transform duration-300">
               <CardHeader>
                 <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                   <Cloud size={32} />
@@ -256,7 +256,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-white dark:bg-black scroll-animate" style={{ animationDelay: '1.2s' }}>
+      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '1.2s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Have a Project?</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto mb-8">
