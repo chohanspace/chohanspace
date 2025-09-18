@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
     --primary: 320 80% 55%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 320 80% 55%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 320 80% 95%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
     --ring: 320 80% 55%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -145,7 +145,7 @@
   }
 }
 
-/* Hero Background Animation */
+/* Hero Background */
 .animation-container {
     position: absolute;
     top: 0;
@@ -154,14 +154,6 @@
     bottom: 0;
     overflow: hidden;
     z-index: 0;
-}
-
-.anim-element {
-    position: absolute;
-    color: hsl(var(--primary) / 0.2);
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    opacity: 0;
 }
 
 .gradient-circle {
@@ -186,60 +178,4 @@
     bottom: -150px;
     right: -150px;
     background: radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%);
-}
-
-
-.anim-laptop {
-    width: 200px;
-    height: 200px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-name: rotate-laptop;
-    animation-duration: 12s;
-}
-
-.anim-code {
-    font-size: 1rem;
-    animation-name: fly-code;
-    animation-duration: 6s;
-    animation-delay: calc(var(--delay) * -1s);
-}
-
-.anim-monitor {
-    width: 150px;
-    height: 150px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.5);
-    animation-name: show-website;
-    animation-duration: 12s;
-}
-
-@keyframes rotate-laptop {
-    0%, 100% { transform: translate(-50%, -50%) rotateY(0deg) scale(1); opacity: 1; }
-    40% { transform: translate(-50%, -50%) rotateY(360deg) scale(1.1); opacity: 1; }
-    50% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    51%, 100% { opacity: 0; }
-}
-
-@keyframes show-website {
-    0%, 50% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-    80%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes fly-code {
-    0% {
-        opacity: 0;
-        transform: translate(var(--start-x), var(--start-y)) scale(0.5);
-    }
-    10%, 40% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1);
-    }
-    50%, 100% {
-        opacity: 0;
-        transform: translate(0, 0) scale(0.5);
-    }
 }

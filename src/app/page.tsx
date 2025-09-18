@@ -2,21 +2,12 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud, Monitor, Laptop } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProjectCard from '@/components/ProjectCard';
 import { placeholderProjects } from '@/lib/placeholder-data';
 
-
-const codeSnippets = [
-  { char: '{...}', delay: 0, x: '-150px', y: '120px' },
-  { char: '</>', delay: 1, x: '150px', y: '-100px' },
-  { char: '() =>', delay: 2, x: '180px', y: '80px' },
-  { char: 'npm i', delay: 3, x: '-180px', y: '-90px' },
-  { char: 'CSS', delay: 4, x: '-100px', y: '-150px' },
-  { char: 'git push', delay: 5, x: '100px', y: '150px' },
-]
 
 export default function Home() {
 
@@ -27,24 +18,6 @@ export default function Home() {
         <div className="animation-container">
             <div className="gradient-circle gradient-circle-top-left"></div>
             <div className="gradient-circle gradient-circle-bottom-right"></div>
-            <Laptop className="anim-element anim-laptop" strokeWidth={0.5} />
-            <Monitor className="anim-element anim-monitor" strokeWidth={0.5} />
-            {codeSnippets.map(snippet => (
-                <span 
-                    key={snippet.char}
-                    className="anim-element anim-code" 
-                    style={{
-                        top: '50%',
-                        left: '50%',
-                        // @ts-ignore
-                        '--delay': snippet.delay,
-                        '--start-x': snippet.x,
-                        '--start-y': snippet.y,
-                    }}
-                >
-                    {snippet.char}
-                </span>
-            ))}
         </div>
 
         <div className="container mx-auto px-4 z-10 animate-fadeIn">
