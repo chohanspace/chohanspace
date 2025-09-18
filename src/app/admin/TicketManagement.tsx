@@ -79,33 +79,40 @@ export function TicketManagement({ initialTickets, onTicketChange }: { initialTi
     const handleAction = async (action: 'delete' | 'verify' | 'cancel' | 'complete' | 'sendEmail', ticketId: string) => {
         setIsActing(ticketId);
         let result;
-        if (action === 'delete') {
-            result = await deleteTicket(ticketId);
-        } else if (action === 'verify') {
-            // This is handled on the ticket page, but keeping for potential future use.
-            // result = await manuallyVerifyTicket(ticketId); 
-        } else if (action === 'cancel') {
-            result = await manuallyCancelTicket(ticketId);
-        } else if (action === 'complete'){
-            result = await markTicketAsCompleted(ticketId);
-        } else if (action === 'sendEmail') {
-            result = await sendDeliveryEmail(ticketId);
-        }
+        try {
+            if (action === 'delete') {
+                result = await deleteTicket(ticketId);
+            } else if (action === 'cancel') {
+                result = await manuallyCancelTicket(ticketId);
+            } else if (action === 'complete'){
+                result = await markTicketAsCompleted(ticketId);
+            } else if (action === 'sendEmail') {
+                result = await sendDeliveryEmail(ticketId);
+            }
 
-        if (result?.success) {
-            toast({
-                title: 'Success',
-                description: result.message || `Ticket action successful.`,
-            });
-            onTicketChange();
-        } else if (result?.message) {
+            if (result?.success) {
+                toast({
+                    title: 'Success',
+                    description: result.message || `Ticket action successful.`,
+                });
+                onTicketChange();
+            } else if (result?.message) {
+                toast({
+                    title: 'Error',
+                    description: result.message,
+                    variant: 'destructive',
+                });
+            }
+        } catch (e) {
+            const err = e instanceof Error ? e.message : "An unknown error occurred";
             toast({
                 title: 'Error',
-                description: result.message || 'Failed to perform action.',
+                description: err,
                 variant: 'destructive',
             });
+        } finally {
+            setIsActing(null);
         }
-        setIsActing(null);
     };
     
     const copyToClipboard = (text: string) => {

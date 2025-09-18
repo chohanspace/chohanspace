@@ -14,6 +14,7 @@ import type { BlogPost, Ticket, Submission } from '@/lib/data';
 import BlogManagementList from './BlogManagementList';
 import { AddNewPost } from './AddNewPost';
 import { TicketManagement } from './TicketManagement';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function AdminLogoutButton() {
   const router = useRouter();
@@ -39,16 +40,70 @@ type DashboardProps = {
     serverError?: string,
 }
 
+function DashboardSkeleton() {
+    return (
+        <div className="grid gap-12">
+            <section>
+                <div className="flex justify-between items-center mb-6">
+                    <Skeleton className="h-8 w-64" />
+                    <Skeleton className="h-10 w-48" />
+                </div>
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-32" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                    </CardContent>
+                </Card>
+            </section>
+             <section>
+                <div className="flex justify-between items-center mb-6">
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-10 w-40" />
+                </div>
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-48" />
+                         <Skeleton className="h-4 w-32" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-16 w-full" />
+                        <Skeleton className="h-16 w-full" />
+                    </CardContent>
+                </Card>
+            </section>
+            <section>
+                 <div className="flex justify-between items-center mb-6">
+                    <Skeleton className="h-8 w-72" />
+                </div>
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-32" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-16 w-full" />
+                        <Skeleton className="h-16 w-full" />
+                    </CardContent>
+                </Card>
+            </section>
+        </div>
+    )
+}
+
+
 export default function AdminDashboard({ initialSubmissions, initialPosts, initialTickets, serverError }: DashboardProps) {
     const [submissions, setSubmissions] = useState<Submission[]>(initialSubmissions);
     const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
     const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
-    const [isLoading, setIsLoading] = useState(false); // Used for subsequent fetches
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(serverError || null);
     const { toast } = useToast();
 
-    // The initial data is now passed as props, so we don't need the initial useEffect fetch.
-    // The `fetchData` function is now only used to refresh data after an action.
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
@@ -86,7 +141,8 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
             
             if (ticketsSnapshot.exists()) {
                 const ticketsData = ticketsSnapshot.val();
-                setTickets(Object.values(ticketsData as Record<string, Ticket>)
+                 setTickets(Object.values(ticketsData as Record<string, Ticket>)
+                    .map((ticket, index) => ({ ...ticket, id: Object.keys(ticketsData)[index] }))
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
             } else {
                 setTickets([]);
@@ -104,6 +160,11 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
             setIsLoading(false);
         }
     }, [toast]);
+    
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
 
     return (
         <div className="container mx-auto px-4 py-12 animate-fadeIn">
@@ -113,8 +174,7 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
                     <p className="text-lg text-muted-foreground">Manage your site content</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    {isLoading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-                    <AdminLogoutButton />
+                    {!isLoading && <AdminLogoutButton />}
                 </div>
             </div>
 
@@ -122,6 +182,8 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
                 <div className="text-center py-12 text-destructive">
                     <p>{error}</p>
                 </div>
+            ) : isLoading ? (
+                <DashboardSkeleton />
             ) : (
                 <div className="grid gap-12">
                     <section>
