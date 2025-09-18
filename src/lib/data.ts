@@ -1,3 +1,4 @@
+
 export type BlogPost = {
   slug: string;
   id: string;
@@ -40,7 +41,9 @@ export type Project = {
   slug: string;
   title: string;
   description: string;
-  image: string;
-  dataAiHint: string;
+  image?: string; // Optional image
+  dataAiHint?: string;
   tags: string[];
+  link?: string; // Optional external link
+  status?: 'Live' | 'Coming Soon';
 };
