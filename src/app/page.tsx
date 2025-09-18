@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, PenTool, Cloud } from 'lucide-react';
+import { ArrowRight, Code, PenTool, Cloud, Handshake, Laptop, Rocket } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProjectCard from '@/components/ProjectCard';
@@ -22,7 +22,7 @@ export default function Home() {
 
         <div className="container mx-auto px-4 z-10 animate-fadeIn">
           <h1 className="text-5xl md:text-7xl font-extrabold font-headline mb-4 tracking-tight text-foreground" style={{fontWeight: 1000}}>
-            We Build Websites And Landing Pages
+            We Build Websites and Landing Pages
           </h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground mb-8">
             Chohan Space crafts intelligent, high-performance websites and applications that drive results.
@@ -80,7 +80,7 @@ export default function Home() {
                 <p className="text-muted-foreground">Designing intuitive and beautiful user interfaces that captivate your audience.</p>
               </CardContent>
             </Card>
-            <Card className="text-center hover:shadow-lg hover:-translatey-1 transition-transform duration-300">
+            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
               <CardHeader>
                 <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                   <Cloud size={32} />
@@ -95,8 +95,55 @@ export default function Home() {
         </div>
       </section>
 
+       {/* Our Process Section */}
+      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.6s' }}>
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Process</h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+              We follow a simple, transparent process to take your vision from concept to reality.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+             <Card className="text-center border-dashed">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
+                  <Handshake size={32} />
+                </div>
+                <CardTitle>1. Consultation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">We start by understanding your goals and project requirements through a detailed discussion.</p>
+              </CardContent>
+            </Card>
+             <Card className="text-center border-dashed">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
+                  <Laptop size={32} />
+                </div>
+                <CardTitle>2. Development</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Our team gets to work, building your website with clean code and modern technologies.</p>
+              </CardContent>
+            </Card>
+             <Card className="text-center border-dashed">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
+                  <Rocket size={32} />
+                </div>
+                <CardTitle>3. Launch</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">After rigorous testing, we deploy your project to the world and hand over the keys.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
        {/* Our Work Section */}
-      <section className="py-16 md:py-24 bg-secondary dark:bg-card scroll-animate" style={{ animationDelay: '0.6s' }}>
+      <section className="py-16 md:py-24 bg-secondary dark:bg-card scroll-animate" style={{ animationDelay: '0.8s' }}>
         <div className="container mx-auto px-4">
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Work</h2>
@@ -120,7 +167,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '1.2s' }}>
+      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '1.0s' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Have a Project?</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto mb-8">
