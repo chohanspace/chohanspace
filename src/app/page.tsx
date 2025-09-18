@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Code, PenTool, Cloud, Lightbulb, BookOpen, FileText, Rocket, Users, BrainCircuit, Bot, Settings, Monitor, Laptop } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const aiFeatures = [
     {
@@ -225,12 +226,17 @@ export default function Home() {
       {/* Collaboration Section */}
       <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.8s' }}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-             <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                <Users size={32} />
-             </div>
+          <div className="text-center">
+            <div className="relative w-full max-w-4xl mx-auto mb-8 aspect-[16/5] rounded-lg overflow-hidden shadow-2xl">
+                <Image 
+                    src="https://i.ibb.co/7rmg0z8/file.png"
+                    alt="Chohan Space and Butt Networks Collaboration Banner"
+                    fill
+                    className="object-contain"
+                />
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold font-headline">In Collaboration With Butt Networks</h2>
-            <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
+            <p className="text-muted-foreground mt-4 max-w-3xl mx-auto">
               Chohan Space is proud to partner with Butt Networks, a leader in innovative web solutions. Led by CEO Shahnawaz Saddam Butt and Co-Owner Wahb Amir, this collaboration combines our strengths to push the boundaries of digital experiences and build the future of the web, together.
             </p>
             <Button asChild size="lg" className="mt-8">
