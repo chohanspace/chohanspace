@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -51,18 +52,22 @@ export function Chatbot() {
         }
     }, [messages, chatState]);
     
+    const handleClose = useCallback(() => {
+        if (messages.length > 1) {
+            saveChatTranscript(messages, userEmail);
+        }
+        // Reset state for next time
+        setMessages([initialMessage]);
+        setChatState('request_email');
+        setUserEmail(undefined);
+    }, [messages, userEmail]);
+
     useEffect(() => {
         if (!isOpen) {
-            // Save transcript when chat closes if there was a conversation
-            if (messages.length > 1) {
-                saveChatTranscript(messages, userEmail);
-            }
-            // Reset state for next time
-            setMessages([initialMessage]);
-            setChatState('request_email');
-            setUserEmail(undefined);
+           handleClose();
         }
-    }, [isOpen, messages, userEmail]);
+    }, [isOpen, handleClose]);
+
 
     const handleSend = async () => {
         if (input.trim() === '') return;
