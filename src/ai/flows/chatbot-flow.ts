@@ -53,5 +53,6 @@ const chatPrompt = ai.definePrompt({
 
 export async function chat(request: ChohanSpaceChatRequest): Promise<ChohanSpaceChatResponse> {
     const {output} = await chatPrompt(request);
-    return output || "Sorry, I'm having a little trouble thinking right now. Please try again in a moment.";
+    // Add a fallback to prevent crashes if the model returns null
+    return output ?? "Sorry, I'm having a little trouble thinking right now. Please try again in a moment.";
   }
