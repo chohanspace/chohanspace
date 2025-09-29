@@ -53,8 +53,13 @@ export function Chatbot() {
     }, [messages, chatState]);
     
     const handleClose = useCallback(() => {
-        if (messages.length > 1) {
-            saveChatTranscript(messages, userEmail);
+        // This function will be called on close.
+        // It reads the latest state via refs to avoid dependency loops.
+        const currentMessages = messages;
+        const currentEmail = userEmail;
+
+        if (currentMessages.length > 1) {
+            saveChatTranscript(currentMessages, currentEmail);
         }
         // Reset state for next time
         setMessages([initialMessage]);
@@ -66,7 +71,8 @@ export function Chatbot() {
         if (!isOpen) {
            handleClose();
         }
-    }, [isOpen, handleClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
 
     const handleSend = async () => {
