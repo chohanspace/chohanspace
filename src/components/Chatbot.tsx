@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -51,23 +51,18 @@ export function Chatbot() {
             scrollToBottom();
         }
     }, [messages, chatState]);
-    
-    const handleClose = useCallback(() => {
-        // This function will be called on close.
-        // It reads the latest state via refs to avoid dependency loops.
-        const currentMessages = messages;
-        const currentEmail = userEmail;
-
-        if (currentMessages.length > 1) {
-            saveChatTranscript(currentMessages, currentEmail);
-        }
-        // Reset state for next time
-        setMessages([initialMessage]);
-        setChatState('request_email');
-        setUserEmail(undefined);
-    }, [messages, userEmail]);
 
     useEffect(() => {
+        const handleClose = () => {
+            if (messages.length > 1) { // Only save if there's a conversation
+                saveChatTranscript(messages, userEmail);
+            }
+            // Reset state for next time
+            setMessages([initialMessage]);
+            setChatState('request_email');
+            setUserEmail(undefined);
+        };
+
         if (!isOpen) {
            handleClose();
         }
