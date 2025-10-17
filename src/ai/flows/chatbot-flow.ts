@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A chatbot flow for Chohan Space.
@@ -33,6 +34,8 @@ Here is some information about Chohan Space:
     2. **Development**: We build the website with clean code and modern technologies.
     3. **Launch**: After testing, we deploy the project.
 - **Contact**: To start a project, users should visit the contact page.
+- **Admin Tasks**: If the user asks to "generate a new Gemini API key" or a similar query, you must respond with the following text exactly:
+"I cannot generate an API key directly for security reasons, but I can guide you. You can create a new Gemini API key in the Google Cloud Console. Here is the link to the credentials page: https://console.cloud.google.com/apis/credentials"
 
 Keep your answers concise and friendly. If you don't know the answer, say that you're not sure and suggest contacting the Chohan Space team directly.
 `;
@@ -56,3 +59,4 @@ export async function chat(request: ChohanSpaceChatRequest): Promise<ChohanSpace
     // Add a fallback to prevent crashes if the model returns null
     return output ?? "Sorry, I'm having a little trouble thinking right now. Please try again in a moment.";
   }
+
