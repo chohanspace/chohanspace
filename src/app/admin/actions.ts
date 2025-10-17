@@ -8,7 +8,7 @@ import { z } from 'zod';
 import type { BlogPost, Ticket } from '@/lib/data';
 import { sendEmail } from '@/lib/email';
 
-const ADMIN_EMAIL = 'abdullahchohan5pansy@gmail.com';
+const ADMIN_EMAIL = process.env.EMAIL_FROM || 'fallback-email@example.com';
 
 export async function deleteSubmission(submissionId: string) {
     if (!submissionId) {

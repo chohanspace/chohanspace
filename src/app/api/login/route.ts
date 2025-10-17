@@ -1,6 +1,7 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   const { password } = await req.json();
@@ -14,21 +15,19 @@ export async function POST(req: NextRequest) {
   }
 
   if (password === adminPassword) {
-    // Password is correct. Generate a short-lived "pre-auth" token.
-    // This token proves that the password step has been completed.
-    const preAuthToken = jwt.sign({ passwordVerified: true }, jwtSecret, { expiresIn: '5m' });
-    
-    const emailOptions = [
-        'abdullahchohan6900@gmail.com',
-        'abdullahchohan5pansy@gmail.com',
-        'abdullah@chohanestate.com'
-    ];
+    // Password is correct. Generate final auth token.
+    const authToken = jwt.sign({ user: 'admin' }, jwtSecret, { expiresIn: '1h' });
 
-    return NextResponse.json({ 
-        success: true, 
-        preAuthToken,
-        emailOptions
+    cookies().set('auth_token', authToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        maxAge: 60 * 60, // 1 hour
+        path: '/',
+        sameSite: 'strict',
     });
+    
+    return NextResponse.json({ success: true });
+
   } else {
     return new NextResponse('Invalid password', { status: 401 });
   }
