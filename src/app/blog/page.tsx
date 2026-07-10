@@ -28,6 +28,8 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPage() {
   const blogPosts = await getBlogPosts();
 

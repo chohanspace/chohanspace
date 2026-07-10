@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { MessageCircle, X, Send, Loader2, Bot, Mail } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { chat } from '@/ai/flows/chatbot-flow';
 import type { ChatMessage } from '@/lib/data';
 import { saveChatTranscript } from '@/app/actions';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -80,8 +79,20 @@ export function Chatbot() {
         setIsLoading(true);
 
         try {
-            const response = await chat({ history: newMessages });
-            const modelMessage: ChatMessage = { role: 'model', content: response };
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ history: newMessages }),
+            });
+
+            const result = await response.json();
+            const content = result?.success && typeof result.data === 'string'
+                ? result.data
+                : "Sorry, I'm having trouble connecting. Please try again later.";
+
+            const modelMessage: ChatMessage = { role: 'model', content };
             setMessages(prev => [...prev, modelMessage]);
         } catch (error) {
             console.error("Chatbot error:", error);

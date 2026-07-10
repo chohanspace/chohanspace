@@ -1,23 +1,5 @@
-
-'use server';
-/**
- * @fileOverview A chatbot flow for Chohan Space.
- *
- * - chat - A function that handles the chatbot conversation.
- */
-import { z } from 'zod';
-import { ChatMessageSchema } from '@/lib/data';
-import type { ChatMessage } from '@/lib/data';
-
-const ChatHistorySchema = z.array(ChatMessageSchema);
-
-const ChohanSpaceChatRequestSchema = z.object({
-  history: ChatHistorySchema,
-});
-export type ChohanSpaceChatRequest = z.infer<typeof ChohanSpaceChatRequestSchema>;
-
-const ChohanSpaceChatResponseSchema = z.string();
-export type ChohanSpaceChatResponse = z.infer<typeof ChohanSpaceChatResponseSchema>;
+const fallbackResponse = "Sorry, I'm having a little trouble thinking right now. Please try again in a moment.";
+let chatPromptInstance = null;
 
 const systemPrompt = `You are a friendly and helpful AI assistant for Chohan Space, a web development agency.
 Your goal is to answer user questions about Chohan Space and encourage them to get in touch.
@@ -38,21 +20,14 @@ Here is some information about Chohan Space:
 Keep your answers concise and friendly. If you don't know the answer, say that you're not sure and suggest contacting the Chohan Space team directly.
 `;
 
-const fallbackResponse = "Sorry, I'm having a little trouble thinking right now. Please try again in a moment.";
-let chatPromptInstance: ((request: ChohanSpaceChatRequest) => Promise<ChohanSpaceChatResponse>) | null = null;
-
-const dynamicImport = new Function('modulePath', 'return import(modulePath);') as (
-  modulePath: string,
-) => Promise<any>;
-
 async function createAi() {
   if (process.env.NEXT_PHASE === 'phase-production-build' || !process.env.GEMINI_API_KEY) {
     return null;
   }
 
   const [{ genkit }, { googleAI }] = await Promise.all([
-    dynamicImport('genkit'),
-    dynamicImport('@genkit-ai/googleai'),
+    import('genkit'),
+    import('@genkit-ai/googleai'),
   ]);
 
   return genkit({
@@ -76,7 +51,6 @@ async function getChatPrompt() {
   }
 
   const ai = await createAi();
-
   if (!ai) {
     chatPromptInstance = async () => fallbackResponse;
     return chatPromptInstance;
@@ -84,8 +58,6 @@ async function getChatPrompt() {
 
   const prompt = ai.definePrompt({
     name: 'chohanSpaceChatPrompt',
-    input: { schema: ChohanSpaceChatRequestSchema },
-    output: { schema: ChohanSpaceChatResponseSchema },
     system: systemPrompt,
     prompt: `
       {{#each history}}
@@ -95,7 +67,7 @@ async function getChatPrompt() {
     `,
   });
 
-  chatPromptInstance = async (request: ChohanSpaceChatRequest) => {
+  chatPromptInstance = async (request) => {
     const { output } = await prompt(request);
     return output ?? fallbackResponse;
   };
@@ -103,8 +75,7 @@ async function getChatPrompt() {
   return chatPromptInstance;
 }
 
-export async function chat(request: ChohanSpaceChatRequest): Promise<ChohanSpaceChatResponse> {
+export async function chat(request) {
   const prompt = await getChatPrompt();
   return prompt(request);
 }
-

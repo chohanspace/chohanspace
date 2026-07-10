@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack(config, { isServer }) {
+    if (isServer) {
+      const externalModules = ['genkit', '@genkit-ai/googleai', '@genkit-ai/next'];
+      config.externals = [...(config.externals || []), ...externalModules];
+    }
+
+    return config;
+  },
   images: {
     remotePatterns: [
       {

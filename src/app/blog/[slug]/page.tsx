@@ -34,6 +34,8 @@ async function getPost(slug: string): Promise<BlogPost | null> {
 }
 
 
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = params;
   const post = await getPost(slug);
@@ -70,19 +72,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   );
 }
 
-export async function generateStaticParams() {
-  if (!database) return [];
-  const postsRef = ref(database, 'blogPosts');
-  try {
-    const snapshot = await get(query(postsRef));
-    if (snapshot.exists()) {
-      const postsData = snapshot.val();
-      return Object.values(postsData as Record<string, BlogPost>).map((post) => ({
-        slug: post.slug,
-      }));
-    }
-  } catch (error) {
-    console.error("Error generating static params for blog posts:", error);
-  }
-  return [];
-}
