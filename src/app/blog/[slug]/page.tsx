@@ -1,13 +1,6 @@
-
 import type { BlogPost } from '@/lib/data';
 import { getDb } from '@/lib/mongodb';
-<img
-  src={post.image}
-  alt={post.title}
-  className="h-full w-full object-cover"
-/>
 import { notFound } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
@@ -60,7 +53,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         <div className="section-shell overflow-hidden p-4 md:p-6">
           <div className="relative mb-6 h-64 overflow-hidden rounded-[24px] md:h-96">
-            <Image src={post.image} alt={post.title} fill className="object-cover" data-ai-hint={post.dataAiHint} priority />
+            <img
+              src={post.image}
+              alt={post.title}
+              className="h-full w-full object-cover"
+            />
           </div>
 
           <header className="mb-8 px-2 md:px-4">
@@ -81,4 +78,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </article>
   );
 }
-
