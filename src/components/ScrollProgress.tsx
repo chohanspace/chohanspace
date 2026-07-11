@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function ScrollProgress() {
@@ -11,15 +10,14 @@ export function ScrollProgress() {
 
   useEffect(() => {
     setIsMounted(true);
-    
+
     const handleScroll = () => {
       const scrollableHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = window.scrollY;
-      const progress = (scrolled / scrollableHeight) * 100;
+      const progress = scrollableHeight > 0 ? (window.scrollY / scrollableHeight) * 100 : 0;
       setScrollTop(progress);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => {
@@ -28,25 +26,14 @@ export function ScrollProgress() {
   }, []);
 
   if (!isMounted) {
-      return null;
+    return null;
   }
 
   return (
-    <div className="fixed top-0 left-0 h-full w-4 md:w-6 z-50 pointer-events-none hidden md:block">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-[1px] bg-border/50"></div>
-      
-      <div
-        className="absolute left-1/2 -translate-x-1/2 transition-all duration-150 ease-out"
-        style={{ top: `calc(${scrollTop}% - 12px)` }}
-      >
-        <Settings
-          className={cn(
-            'h-6 w-6 text-primary',
-            scrollTop > 1 && scrollTop < 99 && 'animate-spin-slow'
-          )}
-          style={{ transformOrigin: 'center center' }}
-        />
-      </div>
+    <div className="pointer-events-none fixed left-3 top-0 z-[60] hidden h-full w-5 md:block">
+      <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border/50" />
+      <div className="absolute left-1/2 h-6 w-6 -translate-x-1/2 rounded-full border border-white/50 bg-white/80 shadow-sm backdrop-blur dark:border-white/10 dark:bg-black/40" style={{ top: `calc(${Math.min(scrollTop, 100)}% - 12px)` }} />
+      <div className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 rounded-full bg-gradient-to-b from-sky-400/0 via-sky-400/80 to-sky-400/0" style={{ height: `${Math.min(scrollTop, 100)}%` }} />
     </div>
   );
 }

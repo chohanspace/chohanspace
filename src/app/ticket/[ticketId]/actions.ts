@@ -1,10 +1,9 @@
 
 'use server';
 
-import { z } from 'zod';
-import { database } from '@/lib/firebase';
-import { ref, update, get } from 'firebase/database';
+import { getDb } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 import type { Ticket } from '@/lib/data';
 import { sendEmail } from '@/lib/email';
 
@@ -55,20 +54,19 @@ function formatAdminNotificationDetails(data: z.infer<typeof verificationSchema>
 }
 
 export async function verifyTicket(ticketId: string, data: unknown) {
-  if (!database) return { success: false, message: 'Database not configured.' };
-
   const parsed = verificationSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, message: 'Invalid form data. Please fill out all fields correctly.' };
   }
   
   const { name, email, phone, countryCode, websiteType, budget, hasDomain, hasHosting, projectDetails } = parsed.data;
-  const ticketRef = ref(database, `tickets/${ticketId}`);
   const fullPhoneNumber = `${countryCode}${phone.replace(/\D/g, '')}`;
 
   try {
-    const snapshot = await get(ticketRef);
-    if (!snapshot.exists() || (snapshot.val() as Ticket).status !== 'Pending') {
+    const db = await getDb();
+    const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+
+    if (!ticketDoc || ticketDoc.status !== 'Pending') {
         return { success: false, message: 'This ticket is invalid or has already been processed.' };
     }
 
@@ -85,9 +83,8 @@ export async function verifyTicket(ticketId: string, data: unknown) {
       projectDetails,
     };
 
-    await update(ticketRef, updates);
+    await db.collection('tickets').updateOne({ id: ticketId }, { $set: updates });
 
-    // Send confirmation email to client
     await sendEmail({
       to: email,
       subject: `Your Project Details are Submitted: Ticket ${ticketId}`,
@@ -95,7 +92,6 @@ export async function verifyTicket(ticketId: string, data: unknown) {
       html: `<p>Hello ${name},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been successfully verified and your project details have been submitted.</p>${formatDetailsForEmail(parsed.data)}<p>Thank you,<br/>Chohan Space</p>`,
     });
 
-    // Send notification email to admin
     await sendEmail({
         to: ADMIN_EMAIL,
         subject: `Ticket Verified: ${ticketId}`,
@@ -118,40 +114,36 @@ const cancellationSchema = z.object({
 });
 
 export async function cancelTicket(ticketId: string, data: unknown) {
-    if (!database) return { success: false, message: 'Database not configured.' };
-
     const parsed = cancellationSchema.safeParse(data);
     if (!parsed.success) {
         return { success: false, message: 'Invalid form data. Please provide a valid reason.' };
     }
 
     const { reason, identity } = parsed.data;
-    const ticketRef = ref(database, `tickets/${ticketId}`);
 
     try {
-        const snapshot = await get(ticketRef);
-        if (!snapshot.exists()) {
+        const db = await getDb();
+        const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+
+        if (!ticketDoc) {
              return { success: false, message: 'This ticket does not exist.' };
         }
         
-        const ticketData = snapshot.val() as Ticket;
-
-        if (ticketData.status === 'Cancelled') {
+        if (ticketDoc.status === 'Cancelled') {
             return { success: false, message: 'This ticket has already been cancelled.' };
         }
         
-        if (ticketData.status === 'Completed') {
+        if (ticketDoc.status === 'Completed') {
             return { success: false, message: 'This ticket has been completed and cannot be cancelled.' };
         }
 
-        // If ticket is verified, we must match the identity (email or phone)
-        if (ticketData.status === 'Verified') {
+        if (ticketDoc.status === 'Verified') {
             if (!identity) {
                 return { success: false, message: 'Email or phone number is required to cancel a verified ticket.' };
             }
             const normalizedIdentity = identity.trim().toLowerCase();
-            const normalizedEmail = ticketData.clientEmail?.trim().toLowerCase();
-            const normalizedPhone = ticketData.clientPhone?.replace(/\D/g, ''); // Remove non-digit chars
+            const normalizedEmail = ticketDoc.clientEmail?.trim().toLowerCase();
+            const normalizedPhone = ticketDoc.clientPhone?.replace(/\D/g, '');
             const normalizedInputPhone = identity.replace(/\D/g, '');
 
             if (normalizedIdentity !== normalizedEmail && normalizedInputPhone !== normalizedPhone) {
@@ -165,23 +157,22 @@ export async function cancelTicket(ticketId: string, data: unknown) {
             cancelledAt: new Date().toISOString(),
         };
 
-        await update(ticketRef, updates);
+        await db.collection('tickets').updateOne({ id: ticketId }, { $set: updates });
         
-        // Send notification email to admin
         await sendEmail({
             to: ADMIN_EMAIL,
             subject: `Ticket Cancelled by Client: ${ticketId}`,
             text: `Ticket ${ticketId} was cancelled by the client. Reason: ${reason}`,
-            html: `<p>Ticket <strong>${ticketId}</strong> was cancelled by the client.</p><p><b>Client:</b> ${ticketData.clientName || identity}</p><p><b>Reason:</b> ${reason}</p>`,
+            html: `<p>Ticket <strong>${ticketId}</strong> was cancelled by the client.</p><p><b>Client:</b> ${ticketDoc.clientName || identity}</p><p><b>Reason:</b> ${reason}</p>`,
         });
 
-        const emailToSendTo = ticketData.clientEmail;
+        const emailToSendTo = ticketDoc.clientEmail;
         if (emailToSendTo) {
              await sendEmail({
                 to: emailToSendTo,
                 subject: `Your Ticket has been Cancelled: ${ticketId}`,
-                text: `Hello ${ticketData.clientName || 'Client'},\n\nThis is a confirmation that your ticket with ID ${ticketId} has been cancelled.\n\nReason: ${reason}\n\nIf you did not request this, please contact us immediately.\n\nThank you,\nChohan Space`,
-                html: `<p>Hello ${ticketData.clientName || 'Client'},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been cancelled.</p><p><b>Reason:</b> ${reason}</p><p>If you did not request this, please contact us immediately.</p><p>Thank you,<br/>Chohan Space</p>`,
+                text: `Hello ${ticketDoc.clientName || 'Client'},\n\nThis is a confirmation that your ticket with ID ${ticketId} has been cancelled.\n\nReason: ${reason}\n\nIf you did not request this, please contact us immediately.\n\nThank you,\nChohan Space`,
+                html: `<p>Hello ${ticketDoc.clientName || 'Client'},</p><p>This is a confirmation that your ticket with ID <strong>${ticketId}</strong> has been cancelled.</p><p><b>Reason:</b> ${reason}</p><p>If you did not request this, please contact us immediately.</p><p>Thank you,<br/>Chohan Space</p>`,
             });
         }
 

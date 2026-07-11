@@ -1,6 +1,5 @@
 
-import { database } from '@/lib/firebase';
-import { ref, get } from "firebase/database";
+import { getDb } from '@/lib/mongodb';
 import type { Ticket } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { TicketVerificationForm } from './TicketVerificationForm';
@@ -10,22 +9,37 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 type TicketPageProps = {
-    params: { ticketId: string };
+    params?: Promise<{ ticketId: string }>;
 };
 
 async function getTicket(ticketId: string): Promise<Ticket | null> {
-    if (!database) return null;
-    const ticketRef = ref(database, `tickets/${ticketId}`);
-    const snapshot = await get(ticketRef);
-    if (snapshot.exists()) {
-        const ticketData = snapshot.val();
-        return { id: ticketId, ...ticketData };
-    }
-    return null;
+    const db = await getDb();
+    const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+    if (!ticketDoc) return null;
+
+    const { _id, ...ticketData } = ticketDoc as any;
+    return {
+        id: ticketData.id ?? ticketId,
+        createdAt: ticketData.createdAt,
+        status: ticketData.status,
+        clientName: ticketData.clientName,
+        clientEmail: ticketData.clientEmail,
+        clientPhone: ticketData.clientPhone,
+        cancellationReason: ticketData.cancellationReason,
+        verifiedAt: ticketData.verifiedAt,
+        cancelledAt: ticketData.cancelledAt,
+        completedAt: ticketData.completedAt,
+        websiteType: ticketData.websiteType,
+        budget: ticketData.budget,
+        hasDomain: ticketData.hasDomain,
+        hasHosting: ticketData.hasHosting,
+        projectDetails: ticketData.projectDetails,
+    };
 }
 
 export default async function TicketPage({ params }: TicketPageProps) {
-    const { ticketId } = params;
+    const resolved = params ? await params : undefined;
+    const { ticketId } = resolved as { ticketId: string };
     const ticket = await getTicket(ticketId);
 
     if (!ticket) {

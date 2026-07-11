@@ -9,11 +9,10 @@ export function CursorTrail() {
 
   useEffect(() => {
     setIsMounted(true);
-    
-    // Check if it's a touch device. If so, don't run the effect.
+
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouchDevice) {
-        return;
+      return;
     }
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -31,9 +30,7 @@ export function CursorTrail() {
       document.body.appendChild(ripple);
 
       ripple.addEventListener('animationend', () => {
-        if (ripple.parentElement) {
-            document.body.removeChild(ripple);
-        }
+        ripple.remove();
       });
     };
 
@@ -49,6 +46,6 @@ export function CursorTrail() {
   if (!isMounted) {
     return null;
   }
-  
-  return <div ref={dotRef} className="cursor-dot"></div>;
+
+  return <div ref={dotRef} className="cursor-dot" aria-hidden="true" />;
 }

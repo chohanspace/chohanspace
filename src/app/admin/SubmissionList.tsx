@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Submission } from './page';
+import type { Submission } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Trash2, Loader2 } from 'lucide-react';

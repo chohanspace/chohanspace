@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
     // Password is correct. Generate final auth token.
     const authToken = jwt.sign({ user: 'admin' }, jwtSecret, { expiresIn: '1h' });
 
-    cookies().set('auth_token', authToken, {
+    const cookiesStore = await cookies();
+    cookiesStore.set('auth_token', authToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
         maxAge: 60 * 60, // 1 hour

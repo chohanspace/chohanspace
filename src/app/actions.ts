@@ -1,7 +1,6 @@
 'use server';
 
-import { database } from '@/lib/firebase';
-import { ref, push, set } from 'firebase/database';
+import { getDb } from '@/lib/mongodb';
 import { z } from 'zod';
 import { ChatMessageSchema } from '@/lib/data';
 import type { ChatMessage } from '@/lib/data';
@@ -13,12 +12,7 @@ const chatTranscriptSchema = z.object({
 });
 
 export async function saveChatTranscript(messages: ChatMessage[], email?: string) {
-    if (!database) {
-        console.error('Database not configured. Cannot save chat transcript.');
-        return { success: false, message: 'Database not configured.' };
-    }
-    
-    if (messages.length <= 1) { // Only initial message, no conversation
+    if (messages.length <= 1) {
         return { success: false, message: 'No conversation to save.' };
     }
 
@@ -35,12 +29,11 @@ export async function saveChatTranscript(messages: ChatMessage[], email?: string
     }
     
     try {
-        const transcriptsRef = ref(database, 'chatTranscripts');
-        const newTranscriptRef = push(transcriptsRef);
-        await set(newTranscriptRef, parsed.data);
+        const db = await getDb();
+        await db.collection('chatTranscripts').insertOne(parsed.data);
         return { success: true };
     } catch (error) {
-        console.error('Error saving chat transcript to Firebase:', error);
+        console.error('Error saving chat transcript to MongoDB:', error);
         return { success: false, message: 'A server error occurred while saving the transcript.' };
     }
 }

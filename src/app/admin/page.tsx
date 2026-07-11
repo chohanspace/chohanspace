@@ -17,7 +17,8 @@ async function verifyToken(token: string, secret: string) {
 }
 
 export default async function AdminPage() {
-    const token = cookies().get('auth_token')?.value;
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get('auth_token')?.value;
     const jwtSecret = process.env.JWT_SECRET;
     let isAuthenticated = false;
 

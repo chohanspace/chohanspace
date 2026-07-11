@@ -13,7 +13,8 @@ async function verifyToken(token: string, secret: string) {
 }
 
 export async function GET() {
-  const token = cookies().get('auth_token')?.value;
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get('auth_token')?.value;
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret || !token) {

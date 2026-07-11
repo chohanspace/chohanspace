@@ -1,8 +1,7 @@
 
 'use server';
 
-import { database } from '@/lib/firebase';
-import { ref, remove, set, push, update, get } from 'firebase/database';
+import { getDb, idQuery } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import type { BlogPost, Ticket } from '@/lib/data';
@@ -14,41 +13,42 @@ export async function deleteSubmission(submissionId: string) {
     if (!submissionId) {
         return { success: false, message: 'Invalid submission ID.' };
     }
-    if (!database) return { success: false, message: 'Database not configured.' };
-    
-    const submissionRef = ref(database, `submissions/${submissionId}`);
-    
+
     try {
-        await remove(submissionRef);
+        const db = await getDb();
+        const result = await db.collection('submissions').deleteOne(idQuery(submissionId));
+
+        if (result.deletedCount === 0) {
+            return { success: false, message: 'Submission not found.' };
+        }
+
         revalidatePath('/admin');
         return { success: true };
     } catch (error) {
-        console.error('Failed to delete submission from Firebase:', error);
+        console.error('Failed to delete submission from MongoDB:', error);
         return { success: false, message: 'A server error occurred while deleting the submission.' };
     }
 }
 
 const blogPostSchema = z.object({
-  title: z.string().min(1, "Title must be at least 1 character."),
-  summary: z.string().min(1, "Summary must be at least 1 character."),
-  content: z.string().min(1, "Content must be at least 1 character."),
-  author: z.string().min(1, "Author name must be at least 1 character."),
-  image: z.string().min(1, "Please enter a valid image URL."),
+  title: z.string().min(1, 'Title must be at least 1 character.'),
+  summary: z.string().min(1, 'Summary must be at least 1 character.'),
+  content: z.string().min(1, 'Content must be at least 1 character.'),
+  author: z.string().min(1, 'Author name must be at least 1 character.'),
+  image: z.string().min(1, 'Please enter a valid image URL.'),
   dataAiHint: z.string().optional(),
 });
 
 function slugify(text: string) {
     return text.toLowerCase()
-        .replace(/\s+/g, '-') // Replace spaces with -
-        .replace(/[^\w-]+/g, '') // Remove all non-word chars
-        .replace(/--+/g, '-') // Replace multiple - with single -
-        .replace(/^-+/, '') // Trim - from start of text
-        .replace(/-+$/, ''); // Trim - from end of text
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
 }
 
 export async function createBlogPost(prevState: { success: boolean; message: string; }, formData: FormData) {
-    if (!database) return { success: false, message: 'Database not configured.' };
-
     const data = Object.fromEntries(formData.entries());
     const parsed = blogPostSchema.safeParse(data);
 
@@ -59,63 +59,55 @@ export async function createBlogPost(prevState: { success: boolean; message: str
 
     const blogData = parsed.data;
     const slug = slugify(blogData.title);
-
-    const newPostRef = push(ref(database, 'blogPosts'));
-    const newPostKey = newPostRef.key;
-
-    if (!newPostKey) {
-        return { success: false, message: 'Could not generate a unique key for the new post.' };
-    }
-
-    const newPost: Omit<BlogPost, 'id'> = {
+    const newPost: BlogPost = {
         ...blogData,
+        id: slug,
         slug,
         date: new Date().toISOString(),
     };
 
     try {
-        await set(ref(database, `blogPosts/${newPostKey}`), { ...newPost, id: newPostKey });
+        const db = await getDb();
+        await db.collection('blogPosts').insertOne(newPost);
 
         revalidatePath('/blog');
         revalidatePath(`/blog/${slug}`);
         revalidatePath('/admin');
         return { success: true, message: 'Blog post created successfully!' };
     } catch (error) {
-        console.error("Error creating blog post:", error);
+        console.error('Error creating blog post:', error);
         return { success: false, message: 'A server error occurred.' };
     }
 }
-
 
 export async function deleteBlogPost(postId: string) {
     if (!postId) {
         return { success: false, message: 'Invalid post ID.' };
     }
-    if (!database) return { success: false, message: 'Database not configured.' };
-    
-    const postRef = ref(database, `blogPosts/${postId}`);
-    
+
     try {
-        await remove(postRef);
+        const db = await getDb();
+        const result = await db.collection('blogPosts').deleteOne(idQuery(postId));
+
+        if (result.deletedCount === 0) {
+            return { success: false, message: 'Blog post not found.' };
+        }
+
         revalidatePath('/admin');
         revalidatePath('/blog');
         return { success: true, message: 'Blog post deleted.' };
     } catch (error) {
-        console.error('Failed to delete blog post from Firebase:', error);
+        console.error('Failed to delete blog post from MongoDB:', error);
         return { success: false, message: 'A server error occurred while deleting the post.' };
     }
 }
 
-
-// Ticketing System Actions
 function generateTicketId() {
     const randomPart = () => Math.random().toString(36).substring(2, 7);
     return `cs-${randomPart()}-${randomPart()}`;
 }
 
 export async function createTicket() {
-    if (!database) return { success: false, message: 'Database not configured.' };
-
     const ticketId = generateTicketId();
     const newTicket: Ticket = {
         id: ticketId,
@@ -123,10 +115,9 @@ export async function createTicket() {
         status: 'Pending',
     };
 
-    const ticketRef = ref(database, `tickets/${ticketId}`);
-
     try {
-        await set(ticketRef, newTicket);
+        const db = await getDb();
+        await db.collection('tickets').insertOne(newTicket);
         revalidatePath('/admin');
         
         await sendEmail({
@@ -145,11 +136,15 @@ export async function createTicket() {
 
 export async function deleteTicket(ticketId: string) {
     if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
-    if (!database) return { success: false, message: 'Database not configured.' };
 
-    const ticketRef = ref(database, `tickets/${ticketId}`);
     try {
-        await remove(ticketRef);
+        const db = await getDb();
+        const result = await db.collection('tickets').deleteOne(idQuery(ticketId));
+
+        if (result.deletedCount === 0) {
+            return { success: false, message: 'Ticket not found.' };
+        }
+
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
         return { success: true };
@@ -161,9 +156,7 @@ export async function deleteTicket(ticketId: string) {
 
 export async function manuallyVerifyTicket(ticketId: string) {
     if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
-    if (!database) return { success: false, message: 'Database not configured.' };
 
-    const ticketRef = ref(database, `tickets/${ticketId}`);
     const updates = {
         status: 'Verified',
         verifiedAt: new Date().toISOString(),
@@ -173,7 +166,13 @@ export async function manuallyVerifyTicket(ticketId: string) {
     };
 
     try {
-        await update(ticketRef, updates);
+        const db = await getDb();
+        const result = await db.collection('tickets').updateOne({ id: ticketId }, { $set: updates });
+
+        if (result.matchedCount === 0) {
+            return { success: false, message: 'Ticket not found.' };
+        }
+
         revalidatePath('/admin');
         return { success: true, message: 'Ticket manually verified.' };
     } catch (error) {
@@ -184,28 +183,26 @@ export async function manuallyVerifyTicket(ticketId: string) {
 
 export async function manuallyCancelTicket(ticketId: string) {
     if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
-    if (!database) return { success: false, message: 'Database not configured.' };
-
-    const ticketRef = ref(database, `tickets/${ticketId}`);
-    
-    const snapshot = await get(ticketRef);
-    if (!snapshot.exists()) {
-        return { success: false, message: 'Ticket not found.' };
-    }
-    const ticketData = snapshot.val() as Ticket;
-
-    if (ticketData.status === 'Cancelled' || ticketData.status === 'Completed') {
-        return { success: false, message: `Ticket is already ${ticketData.status.toLowerCase()} and cannot be cancelled.`};
-    }
-
-    const updates = {
-        status: 'Cancelled',
-        cancelledAt: new Date().toISOString(),
-        cancellationReason: 'Manually cancelled by admin.',
-    };
 
     try {
-        await update(ticketRef, updates);
+        const db = await getDb();
+        const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+
+        if (!ticketDoc) {
+            return { success: false, message: 'Ticket not found.' };
+        }
+
+        if (ticketDoc.status === 'Cancelled' || ticketDoc.status === 'Completed') {
+            return { success: false, message: `Ticket is already ${ticketDoc.status.toLowerCase()} and cannot be cancelled.` };
+        }
+
+        const updates = {
+            status: 'Cancelled',
+            cancelledAt: new Date().toISOString(),
+            cancellationReason: 'Manually cancelled by admin.',
+        };
+
+        await db.collection('tickets').updateOne({ id: ticketId }, { $set: updates });
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
         revalidatePath(`/ticket/${ticketId}/cancel`);
@@ -226,22 +223,21 @@ export async function manuallyCancelTicket(ticketId: string) {
 
 export async function markTicketAsCompleted(ticketId: string) {
     if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
-    if (!database) return { success: false, message: 'Database not configured.' };
-
-    const ticketRef = ref(database, `tickets/${ticketId}`);
-    
-    const snapshot = await get(ticketRef);
-    if (!snapshot.exists() || snapshot.val().status !== 'Verified') {
-        return { success: false, message: 'Only verified tickets can be marked as completed.' };
-    }
-
-    const updates = {
-        status: 'Completed',
-        completedAt: new Date().toISOString(),
-    };
 
     try {
-        await update(ticketRef, updates);
+        const db = await getDb();
+        const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+
+        if (!ticketDoc || ticketDoc.status !== 'Verified') {
+            return { success: false, message: 'Only verified tickets can be marked as completed.' };
+        }
+
+        const updates = {
+            status: 'Completed',
+            completedAt: new Date().toISOString(),
+        };
+
+        await db.collection('tickets').updateOne({ id: ticketId }, { $set: updates });
         revalidatePath('/admin');
         revalidatePath(`/ticket/${ticketId}`);
 
@@ -261,36 +257,33 @@ export async function markTicketAsCompleted(ticketId: string) {
 
 export async function sendDeliveryEmail(ticketId: string) {
     if (!ticketId) return { success: false, message: 'Invalid ticket ID.' };
-    if (!database) return { success: false, message: 'Database not configured.' };
-
-    const ticketRef = ref(database, `tickets/${ticketId}`);
-    const snapshot = await get(ticketRef);
-
-    if (!snapshot.exists()) {
-        return { success: false, message: 'Ticket not found.' };
-    }
-    
-    const ticketData = snapshot.val() as Ticket;
-
-    if (!ticketData.clientEmail) {
-        return { success: false, message: 'No client email on file for this ticket.' };
-    }
-
-    if (ticketData.status !== 'Completed') {
-        return { success: false, message: 'Can only send delivery email for completed tickets.' };
-    }
-    
-    const phoneNumber = "923399663310";
-    const message = `Hello, I'm ready to receive my completed project. My ticket ID is: ${ticketId}`;
-    const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
     try {
+        const db = await getDb();
+        const ticketDoc = await db.collection('tickets').findOne({ id: ticketId });
+
+        if (!ticketDoc) {
+            return { success: false, message: 'Ticket not found.' };
+        }
+
+        if (!ticketDoc.clientEmail) {
+            return { success: false, message: 'No client email on file for this ticket.' };
+        }
+
+        if (ticketDoc.status !== 'Completed') {
+            return { success: false, message: 'Can only send delivery email for completed tickets.' };
+        }
+        
+        const phoneNumber = '923399663310';
+        const message = `Hello, I'm ready to receive my completed project. My ticket ID is: ${ticketId}`;
+        const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
         await sendEmail({
-            to: ticketData.clientEmail,
+            to: ticketDoc.clientEmail,
             subject: `Your Project is Complete! (Ticket: ${ticketId})`,
-            text: `Hello ${ticketData.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. Please click the link below to receive your project deliverables on WhatsApp.\n\nReceive Your Order: ${whatsappLink}\n\nThank you for choosing Chohan Space.`,
+            text: `Hello ${ticketDoc.clientName},\n\nGreat news! Your project associated with ticket ID ${ticketId} has been completed. Please click the link below to receive your project deliverables on WhatsApp.\n\nReceive Your Order: ${whatsappLink}\n\nThank you for choosing Chohan Space.`,
             html: `
-                <p>Hello ${ticketData.clientName},</p>
+                <p>Hello ${ticketDoc.clientName},</p>
                 <p>Great news! Your project associated with ticket ID <strong>${ticketId}</strong> has been completed.</p>
                 <p>Please click the button below to get in touch with us on WhatsApp to receive your final deliverables.</p>
                 <div style="text-align: center; margin: 30px 0;">

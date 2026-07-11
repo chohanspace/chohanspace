@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { database } from '@/lib/firebase';
-import { ref, get, query } from 'firebase/database';
 import { SubmissionList } from './SubmissionList';
 import type { BlogPost, Ticket, Submission } from '@/lib/data';
 import BlogManagementList from './BlogManagementList';
@@ -107,49 +105,20 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
+
         try {
-            if (!database) {
-                throw new Error('Firebase is not configured.');
-            }
-            const submissionsRef = ref(database, 'submissions');
-            const postsRef = ref(database, 'blogPosts');
-            const ticketsRef = ref(database, 'tickets');
-
-            const [submissionsSnapshot, postsSnapshot, ticketsSnapshot] = await Promise.all([
-                get(query(submissionsRef)),
-                get(query(postsRef)),
-                get(query(ticketsRef))
-            ]);
-
-            if (submissionsSnapshot.exists()) {
-                const submissionsData = submissionsSnapshot.val();
-                setSubmissions(Object.entries(submissionsData).map(([key, value]) => ({
-                    id: key,
-                    ...(value as Omit<Submission, 'id'>)
-                })).reverse());
-            } else {
-                setSubmissions([]);
+            const response = await fetch('/api/admin/dashboard');
+            if (!response.ok) {
+                throw new Error('Failed to load dashboard data.');
             }
 
-            if (postsSnapshot.exists()) {
-                const postsData = postsSnapshot.val();
-                setPosts(Object.values(postsData as Record<string, BlogPost>)
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-            } else {
-                setPosts([]);
-            }
-            
-            if (ticketsSnapshot.exists()) {
-                const ticketsData = ticketsSnapshot.val();
-                 setTickets(Object.values(ticketsData as Record<string, Ticket>)
-                    .map((ticket, index) => ({ ...ticket, id: Object.keys(ticketsData)[index] }))
-                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-            } else {
-                setTickets([]);
-            }
+            const data = await response.json();
+            setSubmissions(data.submissions ?? []);
+            setPosts(data.posts ?? []);
+            setTickets(data.tickets ?? []);
         } catch (fetchError) {
             const errorMessage = fetchError instanceof Error ? fetchError.message : 'An unknown error occurred.';
-            console.error("Error fetching data:", fetchError);
+            console.error('Error fetching data:', fetchError);
             setError(`Failed to refresh dashboard data: ${errorMessage}`);
             toast({
                 title: 'Error',
@@ -167,16 +136,20 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
 
 
     return (
-        <div className="container mx-auto px-4 py-12 animate-fadeIn">
-             <div className="flex justify-between items-center mb-12">
-                <div className="text-left">
-                    <h1 className="text-4xl md:text-5xl font-bold font-headline mb-2">Admin Dashboard</h1>
-                    <p className="text-lg text-muted-foreground">Manage your site content</p>
+        <div className="px-3 py-10 md:px-4 md:py-16">
+            <div className="mx-auto max-w-7xl">
+                <div className="section-shell px-6 py-10 md:px-10 md:py-14">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                        <div className="text-left">
+                            <p className="text-sm font-medium uppercase tracking-[0.25em] text-primary">Admin</p>
+                            <h1 className="mt-3 text-4xl font-semibold tracking-[-0.02em] md:text-5xl">Admin dashboard</h1>
+                            <p className="mt-3 text-lg leading-8 text-muted-foreground">Manage your site content from a single, polished workspace.</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {!isLoading && <AdminLogoutButton />}
+                        </div>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    {!isLoading && <AdminLogoutButton />}
-                </div>
-            </div>
 
             {error ? (
                 <div className="text-center py-12 text-destructive">
@@ -222,6 +195,7 @@ export default function AdminDashboard({ initialSubmissions, initialPosts, initi
                     </section>
                 </div>
             )}
+            </div>
         </div>
     );
 }

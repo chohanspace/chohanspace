@@ -9,7 +9,7 @@ export type BlogPost = {
   author: string;
   date: string;
   image: string;
-  dataAiHint: string;
+  dataAiHint?: string;
 };
 
 export type Ticket = {

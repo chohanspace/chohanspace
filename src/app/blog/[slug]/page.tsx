@@ -1,7 +1,6 @@
 
 import type { BlogPost } from '@/lib/data';
-import { database } from '@/lib/firebase';
-import { ref, get, query, orderByChild, equalTo, limitToFirst } from 'firebase/database';
+import { getDb } from '@/lib/mongodb';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -9,35 +8,36 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 type BlogPostPageProps = {
-  params: {
-    slug: string;
-  };
+  params?: Promise<{ slug: string }>;
 };
 
 async function getPost(slug: string): Promise<BlogPost | null> {
-    if (!database) return null;
-    const postsRef = ref(database, 'blogPosts');
-    
-    try {
-        const snapshot = await get(postsRef);
-        if (snapshot.exists()) {
-            const postsData = snapshot.val();
-            // Find the post with the matching slug
-            const post = Object.values(postsData as Record<string, BlogPost>).find(p => p.slug === slug);
-            return post || null;
-        }
-        return null;
-    } catch (error) {
-        console.error("Error fetching single post:", error);
-        return null;
+    const db = await getDb();
+    const post = await db.collection('blogPosts').findOne({ slug });
+
+    if (!post) {
+      return null;
     }
+
+    return {
+      id: typeof post.id === 'string' ? post.id : post._id.toString(),
+      slug: post.slug,
+      title: post.title,
+      summary: post.summary,
+      content: post.content,
+      author: post.author,
+      date: post.date,
+      image: post.image,
+      dataAiHint: post.dataAiHint ?? '',
+    };
 }
 
 
 export const dynamic = 'force-dynamic';
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = params;
+  const resolved = params ? await params : undefined;
+  const { slug } = resolved as { slug: string };
   const post = await getPost(slug);
 
   if (!post) {
@@ -45,28 +45,34 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <article className="container max-w-4xl mx-auto px-4 py-12 animate-fadeIn">
-        <div className="mb-8">
-            <Link href="/blog" className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Blog
-            </Link>
+    <article className="px-3 py-10 md:px-4 md:py-16">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-6">
+          <Link href="/blog" className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-primary">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to blog
+          </Link>
         </div>
-      <div className="relative h-64 md:h-96 w-full mb-8 rounded-lg overflow-hidden shadow-lg">
-        <Image src={post.image} alt={post.title} fill className="object-cover" data-ai-hint={post.dataAiHint} priority />
-      </div>
 
-      <header className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-bold font-headline mb-4">{post.title}</h1>
-        <div className="text-muted-foreground text-sm">
-          <span>By {post.author}</span>
-          <span className="mx-2">&bull;</span>
-          <span>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <div className="section-shell overflow-hidden p-4 md:p-6">
+          <div className="relative mb-6 h-64 overflow-hidden rounded-[24px] md:h-96">
+            <Image src={post.image} alt={post.title} fill className="object-cover" data-ai-hint={post.dataAiHint} priority />
+          </div>
+
+          <header className="mb-8 px-2 md:px-4">
+            <div className="mb-4 inline-flex items-center rounded-full border border-white/50 bg-white/70 px-3 py-1 text-sm text-foreground/80 backdrop-blur dark:border-white/10 dark:bg-white/10">
+              {new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+            <h1 className="text-3xl font-semibold tracking-[-0.02em] md:text-5xl">{post.title}</h1>
+            <div className="mt-4 text-sm text-muted-foreground">
+              <span>By {post.author}</span>
+            </div>
+          </header>
+
+          <div className="prose prose-lg max-w-none whitespace-pre-wrap text-foreground/90 dark:prose-invert md:px-4">
+            {post.content}
+          </div>
         </div>
-      </header>
-
-      <div className="prose dark:prose-invert prose-lg max-w-none text-foreground/90 whitespace-pre-wrap">
-        {post.content}
       </div>
     </article>
   );

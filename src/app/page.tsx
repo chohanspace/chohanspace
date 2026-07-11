@@ -1,5 +1,4 @@
 
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Code, PenTool, Cloud, Handshake, Laptop, Rocket } from 'lucide-react';
@@ -8,176 +7,133 @@ import Image from 'next/image';
 import ProjectCard from '@/components/ProjectCard';
 import { placeholderProjects } from '@/lib/placeholder-data';
 
+const services = [
+  { title: 'Web Development', description: 'Robust product experiences tailored for speed, clarity, and growth.', icon: Code },
+  { title: 'UI/UX Design', description: 'Elegant interfaces that feel effortless on every device.', icon: PenTool },
+  { title: 'Cloud Solutions', description: 'Reliable infrastructure that scales with your ambition.', icon: Cloud },
+];
+
+const process = [
+  { title: '1. Consultation', description: 'We understand your goals, audience, and the experience you want to create.', icon: Handshake },
+  { title: '2. Build', description: 'We craft polished systems with deliberate detail and measurable performance.', icon: Laptop },
+  { title: '3. Launch', description: 'We refine, test, and ship with the confidence of a premium release.', icon: Rocket },
+];
 
 export default function Home() {
-
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden bg-background py-16">
-        <div className="animation-container">
-            <div className="gradient-circle gradient-circle-top-left"></div>
-            <div className="gradient-circle gradient-circle-bottom-right"></div>
-        </div>
+      <section className="relative overflow-hidden px-3 pb-14 pt-8 md:px-4 md:pb-24 md:pt-12">
+        <div className="ambient-orb left-[-4rem] top-[-2rem] h-48 w-48 bg-sky-400/30" />
+        <div className="ambient-orb bottom-[-2rem] right-[-2rem] h-56 w-56 bg-blue-400/20" />
 
-        <div className="container mx-auto px-4 z-10 animate-fadeIn">
-          <h1 className="text-5xl md:text-7xl font-extrabold font-headline mb-4 tracking-tight text-foreground" style={{fontWeight: 1000}}>
-            We Build Websites and Landing Pages
+        <div className="glass-panel relative mx-auto flex min-h-[78vh] max-w-6xl flex-col items-center justify-center px-6 py-16 text-center shadow-[0_30px_120px_rgba(37,99,235,0.18)] md:px-10 md:py-24">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/70 px-3 py-1 text-sm text-foreground/80 backdrop-blur dark:border-white/10 dark:bg-white/10">
+            <span className="h-2 w-2 rounded-full bg-sky-500" />
+            Premium digital experiences, thoughtfully engineered.
+          </div>
+          <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.03em] text-foreground sm:text-5xl md:text-7xl">
+            We build modern products that feel unmistakably premium.
           </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground mb-8">
-            Chohan Space crafts intelligent, high-performance websites and applications that drive results.
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+            Chohan Space combines design, strategy, and development to create sites and products that feel intuitive, fast, and unmistakably refined.
           </p>
-
-          <div className="my-8">
-            <Image 
-              src="https://i.ibb.co/q3ktqWX1/Purple-Black-Modern-Marketing-Plan-Presentation-20250918-160326-0000.png" 
-              alt="Chohan Space Banner"
-              width={1200}
-              height={630}
-              className="rounded-lg shadow-lg mx-auto"
-              priority
-            />
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild size="lg" className="rounded-full px-6 shadow-[0_16px_60px_rgba(37,99,235,0.2)]">
+              <Link href="/work">
+                Explore our work <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg" className="rounded-full px-6">
+              <Link href="/contact">Start a project</Link>
+            </Button>
           </div>
-
-          <Button asChild size="lg">
-            <Link href="/work">
-              Explore Our Work <ArrowRight className="ml-2" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      
-      {/* Services Section */}
-      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '0.4s' }}>
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-headline">What We Do</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              From sleek marketing sites to complex web applications, we build solutions for the modern web.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <Code size={32} />
-                </div>
-                <CardTitle>Web Development</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Crafting robust, scalable, and secure web applications tailored to your needs.</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <PenTool size={32} />
-                </div>
-                <CardTitle>UI/UX Design</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Designing intuitive and beautiful user interfaces that captivate your audience.</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <Cloud size={32} />
-                </div>
-                <CardTitle>Cloud Solutions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Leveraging cloud infrastructure to deliver reliable and scalable applications.</p>
-              </CardContent>
-            </Card>
+          <div className="mt-10 w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/40 bg-white/70 p-2 shadow-[0_25px_90px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
+            <Image src="https://i.ibb.co/q3ktqWX1/Purple-Black-Modern-Marketing-Plan-Presentation-20250918-160326-0000.png" alt="Chohan Space showcase" width={1400} height={760} className="h-auto w-full rounded-[22px] object-cover" priority />
           </div>
         </div>
       </section>
 
-       {/* Our Process Section */}
-      <section className="py-16 md:py-24 bg-background scroll-animate" style={{ animationDelay: '0.6s' }}>
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Process</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              We follow a simple, transparent process to take your vision from concept to reality.
-            </p>
+      <section className="px-3 py-10 md:px-4 md:py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 text-center md:mb-10">
+            <h2 className="text-3xl font-semibold tracking-[-0.02em] md:text-4xl">What we do</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">From polished marketing experiences to high-performance web products, every touchpoint is crafted to feel effortless.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-             <Card className="text-center border-dashed">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <Handshake size={32} />
-                </div>
-                <CardTitle>1. Consultation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">We start by understanding your goals and project requirements through a detailed discussion.</p>
-              </CardContent>
-            </Card>
-             <Card className="text-center border-dashed">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <Laptop size={32} />
-                </div>
-                <CardTitle>2. Development</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Our team gets to work, building your website with clean code and modern technologies.</p>
-              </CardContent>
-            </Card>
-             <Card className="text-center border-dashed">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 text-primary rounded-full h-16 w-16 flex items-center justify-center mb-4">
-                  <Rocket size={32} />
-                </div>
-                <CardTitle>3. Launch</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">After rigorous testing, we deploy your project to the world and hand over the keys.</p>
-              </CardContent>
-            </Card>
+          <div className="grid gap-6 md:grid-cols-3">
+            {services.map((service) => {
+              const Icon = service.icon;
+              return (
+                <Card key={service.title} className="group border-white/45 bg-white/70 p-0 shadow-[0_20px_70px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(37,99,235,0.12)] dark:border-white/10 dark:bg-black/35">
+                  <CardHeader className="p-6">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/45 bg-white/80 text-foreground shadow-sm dark:border-white/10 dark:bg-white/10">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <CardTitle className="text-xl">{service.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-6 pb-6">
+                    <CardDescription className="text-[0.95rem] leading-7">{service.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
-       {/* Our Work Section */}
-      <section className="py-16 md:py-24 bg-secondary dark:bg-card scroll-animate" style={{ animationDelay: '0.8s' }}>
-        <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Work</h2>
-                <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Here's a glimpse of some of the projects we've brought to life.
-                </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {placeholderProjects.slice(0,3).map((project) => (
-                    <ProjectCard key={project.slug} {...project} />
-                ))}
-            </div>
-            <div className="text-center mt-12">
-                <Button asChild>
-                    <Link href="/work">
-                        View All Projects <ArrowRight className="ml-2" />
-                    </Link>
-                </Button>
-            </div>
+      <section className="px-3 py-10 md:px-4 md:py-16">
+        <div className="section-shell mx-auto max-w-6xl p-6 md:p-8 lg:p-10">
+          <div className="mb-8 text-center md:mb-10">
+            <h2 className="text-3xl font-semibold tracking-[-0.02em] md:text-4xl">Our process</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">A clear, transparent path from the first conversation to a final launch.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {process.map((step) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.title} className="rounded-[24px] border border-white/45 bg-white/70 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-white/10 dark:bg-black/35">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/45 bg-white/80 text-foreground shadow-sm dark:border-white/10 dark:bg-white/10">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-3 text-[0.95rem] leading-7 text-muted-foreground">{step.description}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 scroll-animate" style={{ animationDelay: '1.0s' }}>
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline">Have a Project?</h2>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto mb-8">
-            Let's collaborate to bring your next digital product to life.
-          </p>
-          <Button asChild size="lg">
-            <Link href="/contact">
-              Get in Touch
-            </Link>
-          </Button>
+      <section className="px-3 py-10 md:px-4 md:py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 text-center md:mb-10">
+            <h2 className="text-3xl font-semibold tracking-[-0.02em] md:text-4xl">Selected work</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">A few recent experiences designed to feel elevated and purposeful.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {placeholderProjects.slice(0, 3).map((project) => (
+              <ProjectCard key={project.slug} {...project} />
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Button asChild size="lg" className="rounded-full px-6">
+              <Link href="/work">View all projects <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-3 py-10 md:px-4 md:py-16">
+        <div className="section-shell mx-auto max-w-6xl px-6 py-10 text-center md:px-10 md:py-16">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] md:text-4xl">Have a project in mind?</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">Let&apos;s shape a digital experience that feels as intentional as it is effective.</p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Button asChild size="lg" className="rounded-full px-6">
+              <Link href="/contact">Get in touch</Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg" className="rounded-full px-6">
+              <Link href="/blog">Read the blog</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>
