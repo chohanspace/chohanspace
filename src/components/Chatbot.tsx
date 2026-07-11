@@ -187,14 +187,14 @@ export function Chatbot() {
     return (
         <>
             <div className={cn("fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 transition-transform duration-300", isOpen ? "scale-0" : "scale-100")}>
-                <Button size="icon" className="rounded-full w-16 h-16 shadow-lg" onClick={() => setIsOpen(true)}>
+                <Button size="icon" className="h-16 w-16 rounded-full border border-white/40 bg-white/80 shadow-[0_20px_80px_rgba(15,23,42,0.16)] backdrop-blur-xl dark:border-white/10 dark:bg-black/40" onClick={() => setIsOpen(true)}>
                     <MessageCircle className="h-8 w-8" />
                     <span className="sr-only">Open Chat</span>
                 </Button>
             </div>
 
             <div className={cn("fixed z-50 transition-all duration-300 bottom-4 right-4 w-[calc(100vw-2rem)] max-w-sm md:bottom-6 md:right-6", isOpen ? "opacity-100 scale-100" : "opacity-0 scale-90 pointer-events-none")}>
-                <Card className="flex flex-col h-[70vh] max-h-[40rem] shadow-xl">
+                <Card className="flex h-[70vh] max-h-[40rem] flex-col border-white/45 bg-white/80 shadow-[0_30px_100px_rgba(15,23,42,0.16)] backdrop-blur-2xl dark:border-white/10 dark:bg-black/40">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-primary text-primary-foreground rounded-full">
@@ -202,7 +202,7 @@ export function Chatbot() {
                             </div>
                             <CardTitle className="text-lg">Chohan Space AI</CardTitle>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setIsOpen(false)}>
                             <X className="h-5 w-5" />
                             <span className="sr-only">Close Chat</span>
                         </Button>

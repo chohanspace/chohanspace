@@ -10,19 +10,43 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { CursorTrail } from '@/components/CursorTrail';
 import { Chatbot } from '@/components/Chatbot';
+import { StructuredData } from '@/components/StructuredData';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Chohan Space | Web Development Agency',
-  description: 'Chohan Space crafts intelligent, high-performance websites and applications that drive results.',
+  metadataBase: new URL('https://www.chohanspace.com'),
+  title: {
+    default: 'Chohan Space | Premium Web Experiences',
+    template: '%s | Chohan Space',
+  },
+  description: 'Chohan Space designs and builds premium websites, polished product experiences, and high-performance digital systems for ambitious brands.',
+  keywords: ['web design', 'web development', 'next.js', 'product design', 'digital agency', 'premium websites'],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    images: ['https://i.ibb.co/q3ktqWX1/Purple-Black-Modern-Marketing-Plan-Presentation-20250918-160326-0000.png'],
+    title: 'Chohan Space | Premium Web Experiences',
+    description: 'Premium web experiences designed for modern brands and ambitious products.',
+    url: 'https://www.chohanspace.com',
+    siteName: 'Chohan Space',
+    locale: 'en_US',
+    type: 'website',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'Chohan Space brand preview' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Chohan Space | Premium Web Experiences',
+    description: 'Premium websites and digital products crafted with strategy, design, and engineering.',
+    images: ['/opengraph-image'],
   },
   icons: {
-    icon: 'https://i.ibb.co/C9v9V1j/file-321c2c31e21b7147b38f828555239e24.png',
+    icon: '/choran-space-logo.svg',
+    shortcut: '/choran-space-logo.svg',
+    apple: '/choran-space-logo.svg',
   },
+  manifest: '/manifest.webmanifest',
 };
 
 export default function RootLayout({
@@ -39,6 +63,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <StructuredData />
           <Chatbot />
           <Toaster />
         </ThemeProvider>
