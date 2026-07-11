@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import type { BlogPost } from '@/lib/data';
 import { getDb } from '@/lib/mongodb';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -48,7 +47,11 @@ export default async function BlogPage() {
               <Card key={post.slug} className="flex flex-col overflow-hidden">
                 <Link href={`/blog/${post.slug}`} className="block">
                   <div className="relative h-48 w-full">
-                    <Image src={post.image} alt={post.title} fill className="object-cover" data-ai-hint={post.dataAiHint} />
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                 </Link>
                 <CardHeader>
