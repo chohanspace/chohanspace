@@ -1,7 +1,11 @@
 
 import type { BlogPost } from '@/lib/data';
 import { getDb } from '@/lib/mongodb';
-import Image from 'next/image';
+<img
+  src={post.image}
+  alt={post.title}
+  className="h-full w-full object-cover"
+/>
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
